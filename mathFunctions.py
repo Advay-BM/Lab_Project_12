@@ -1,6 +1,6 @@
 import numpy as n
 import sympy as s
-from time import perf_counter
+# from time import perf_counter
 
 # Const Definitions
 pi = 3.141592653589793
@@ -181,15 +181,15 @@ def acoth(x):
 def acsch(x):
     return s.acsch(x)
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    for i in range(0,11,1):
-        print(f"{i = }",end="\t")
-        start_timeN = perf_counter()
-        print(n.exp(i), end ="\t")
-        end_timeN = perf_counter()
-        start_timeC = perf_counter()
-        print(exp(i))
-        end_timeC = perf_counter()
-        print(f"Code exuction time(Numpy): {(end_timeN - start_timeN)*1000:.4f}ms")
-        print(f"Code exuction time(Custom): {(end_timeC - start_timeC)*1000:.4f}ms\n")
+#     for i in range(0,11,1):
+#         print(f"{i = }",end="\t")
+#         start_timeN = perf_counter()
+#         print(n.exp(i), end ="\t")
+#         end_timeN = perf_counter()
+#         start_timeC = perf_counter()
+#         print(exp(i))
+#         end_timeC = perf_counter()
+#         print(f"Code exuction time(Numpy): {(end_timeN - start_timeN)*1000:.4f}ms")
+#         print(f"Code exuction time(Custom): {(end_timeC - start_timeC)*1000:.4f}ms\n")
