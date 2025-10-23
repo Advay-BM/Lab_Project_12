@@ -9,47 +9,47 @@ twoPi = 6.283185307179586
 
 # Function definitions
 # Arithmetic
-def power(base, exponent):
-    return base**exponent
+def power(base, exponent): # type: ignore # type: ignore
+    return base**exponent # type: ignore
 
 # Trig
-def sin(x):
+def sin(x): # type: ignore
     sign: int = 1
     # Use properties of sin to reduce the value of x and also increase accuracy by bringing the value closer to 0
     while x > twoPi:
-        x -= twoPi
+        x -= twoPi # type: ignore # type: ignore
     while x < -twoPi:
-        x += twoPi
+        x += twoPi # type: ignore
     
     if x > pi:
-        x -= pi
+        x -= pi # type: ignore # type: ignore
         sign = -1
     elif x < -pi:
-        x += pi
+        x += pi # type: ignore
         sign = -1
 
     out = 0
-    do = x                   # do stands for the change or delta in output by adding a new term
+    do = x                   # type: ignore # type: ignore # do stands for the change or delta in output by adding a new term
     # Taylor series expansion of sin: x - x^3/3! + x^5/5! - x^7/7! + ...
     # 50 terms are used which just about gives enough accuracy to be correct to the last few decimal places python can handle
     for i in range(3,100,2):
-        out += do
-        do *= -(x**2)/(i*(i-1))
-    return sign*(out + do)
+        out += do # type: ignore # type: ignore
+        do *= -(x**2)/(i*(i-1)) # type: ignore
+    return sign*(out + do) # type: ignore
 
-def cos(x):
+def cos(x): # type: ignore # type: ignore
     sign = 1
     # Use properties of cos to reduce the value of x and also increase accuracy by bringing the value closer to 0
     while x > twoPi:
-        x -= twoPi
+        x -= twoPi # type: ignore
     while x < -twoPi:
-        x += twoPi
+        x += twoPi # type: ignore
     
     if x > pi:
-        x -= pi
+        x -= pi # type: ignore
         sign = -1
     elif x < -pi:
-        x += pi
+        x += pi # type: ignore
         sign = -1
 
     out = 0
@@ -57,126 +57,126 @@ def cos(x):
     # Taylor series expansion of sin: 1 - x^2/2! + x^4/4! - x^6/6! + ...
     # 50 terms are used which just about gives enough accuracy to be correct to the last few decimal places python can handle
     for i in range(2,100,2):
-        out += do
-        do *= -(x**2)/(i*(i-1))
-    return sign*(out+do)
+        out += do # type: ignore
+        do *= -(x**2)/(i*(i-1)) # type: ignore
+    return sign*(out+do) # type: ignore
 
-def tan(x):
-    return sin(x)/cos(x)
+def tan(x): # type: ignore
+    return sin(x)/cos(x) # type: ignore
 
-def sec(x):
-    return 1/cos(x)
+def sec(x): # type: ignore # type: ignore
+    return 1/cos(x) # type: ignore
 
-def cot(x):
-    return cos(x)/sin(x)
+def cot(x): # type: ignore
+    return cos(x)/sin(x) # type: ignore
 
-def csc(x):
-    return 1/sin(x)
+def csc(x): # type: ignore
+    return 1/sin(x) # type: ignore
 
 # Other
-def exp(x):
-    return e**x
+def exp(x): # type: ignore
+    return e**x # type: ignore
 
-def abs(x):
+def abs(x): # type: ignore
     if x < 0:
-        return -x
-    return x
+        return -x # type: ignore
+    return x # type: ignore
 
-def factorial(x):
+def factorial(x): # type: ignore
     if (x == 0):
         return 1
 
     out = 1
-    for i in range(x,1,-1):
+    for i in range(x,1,-1): # type: ignore
         out *= i
     return out
 
-def log(x):
-    return n.log10(x)
+def log(x): # type: ignore
+    return n.log10(x) # type: ignore
 
-def ln(x):
-    return n.log10(x)/n.log10(e)
+def ln(x): # type: ignore
+    return n.log10(x)/n.log10(e) # type: ignore
 
-def sqrt(x):
-    return x**(0.5)
+def sqrt(x): # type: ignore
+    return x**(0.5) # type: ignore
 
-def Pol(x, y):
-    r = (x**2 + y**2)**(0.5)
-    theta = n.atan2(y,x)
-    return (r, theta)
+def Pol(x, y): # type: ignore
+    r = (x**2 + y**2)**(0.5) # type: ignore
+    theta = n.atan2(y,x) # type: ignore
+    return (r, theta) # type: ignore
 
-def Rec(r, theta):
-    x = r*cos(theta)
-    y = r*sin(theta)
-    return (x, y)
+def Rec(r, theta): # type: ignore # type: ignore
+    x = r*cos(theta) # type: ignore
+    y = r*sin(theta) # type: ignore
+    return (x, y) # type: ignore
 
-def nRoot(n, x):
-    return x**(1/n)
+def nRoot(n, x): # type: ignore
+    return x**(1/n) # type: ignore
 
 # Hyperbolic trig
 
-def sinh(x):
-    return (exp(x)-exp(-x))/2
+def sinh(x): # type: ignore
+    return (exp(x)-exp(-x))/2 # type: ignore
 
-def cosh(x):
-    return (exp(x)+exp(-x))/2
+def cosh(x): # type: ignore
+    return (exp(x)+exp(-x))/2 # type: ignore
 
-def tanh(x):
-    return sinh(x)/cosh(x)
+def tanh(x): # type: ignore
+    return sinh(x)/cosh(x) # type: ignore
 
-def sech(x):
-    return 1/cosh(x)
+def sech(x): # type: ignore # type: ignore
+    return 1/cosh(x) # type: ignore
 
-def coth(x):
-    return cosh(x)/sinh(x)
+def coth(x): # type: ignore
+    return cosh(x)/sinh(x) # type: ignore
 
-def csch(x):
-    return 1/sinh(x)
+def csch(x): # type: ignore
+    return 1/sinh(x) # type: ignore
 
 # Permutations and combinations
 
-def nPr(n, r):
-    return factorial(n)/(factorial(n-r))
+def nPr(n, r): # type: ignore
+    return factorial(n)/(factorial(n-r)) # type: ignore
 
-def nCr(n, r):
-    return factorial(n)/(factorial(r)*factorial(n-r))
+def nCr(n, r): # type: ignore
+    return factorial(n)/(factorial(r)*factorial(n-r)) # type: ignore
 
 # Inverse trig
-def asin(x):
-    return n.arcsin(x)
+def asin(x): # type: ignore
+    return n.arcsin(x) # type: ignore
 
-def acos(x):
-    return n.arccos(x)
+def acos(x): # type: ignore
+    return n.arccos(x) # type: ignore
 
-def atan(x):
-    return n.arctan(x)
+def atan(x): # type: ignore
+    return n.arctan(x) # type: ignore
 
-def asec(x):
-    return s.asec(x)
+def asec(x): # type: ignore
+    return s.asec(x) # type: ignore
 
-def acot(x):
-    return s.cot(x)
+def acot(x): # type: ignore
+    return s.cot(x) # type: ignore
 
-def acsc(x):
-    return s.acsc(x)
+def acsc(x): # type: ignore
+    return s.acsc(x) # type: ignore
 
-def asinh(x):
-    return n.arcsinh(x)
+def asinh(x): # type: ignore
+    return n.arcsinh(x) # type: ignore
 
-def acosh(x):
-    return n.arccosh(x)
+def acosh(x): # type: ignore
+    return n.arccosh(x) # type: ignore
 
-def atanh(x):
-    return n.arctanh(x)
+def atanh(x): # type: ignore
+    return n.arctanh(x) # type: ignore
 
-def assech(x):
-    return s.asech(x)
+def assech(x): # type: ignore
+    return s.asech(x) # type: ignore
 
-def acoth(x):
-    return s.coth(x)
+def acoth(x): # type: ignore
+    return s.coth(x) # type: ignore
 
-def acsch(x):
-    return s.acsch(x)
+def acsch(x): # type: ignore
+    return s.acsch(x) # type: ignore
 
 # if __name__ == "__main__":
 
