@@ -18,7 +18,7 @@ digit_buttons=     ["0","1","2","3","4","5","6","7","8","9",".","=",]
 function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","M+","→","nCr", "Rec()","Sin","Cos","Tan","Pol()", "DEG","Csc","Sec","Cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
 Light_blue="#ADD8E6"
 Light_grey="#D3D3D3"
-
+Pink="#FFC0CB"
 row_count= len(Value_buttons)
 column_count= len(Value_buttons[0])
 
@@ -38,7 +38,7 @@ for row in range(row_count):
         if value in right_buttons:
             buttons.config(foreground="black", background=Light_blue)
         elif value in digit_buttons:
-            buttons.config(foreground="black", background="pink")
+            buttons.config(foreground="black", background=Pink)
         elif value in function_buttons:
             buttons.config(foreground="black", background=Light_grey)
         else:
@@ -47,9 +47,6 @@ for row in range(row_count):
 
         
 frame.pack()
-A = "0"
-B = None
-operator = None
 
 leftStr = ["0"]
 leftVal = [0]
