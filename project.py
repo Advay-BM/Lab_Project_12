@@ -59,7 +59,7 @@ leftChar = "0"
 rightChar = None
 #               0   1    2    3    4    5    6    7   8   9   10   11   12    13   14  15
 # Index order: (), sin, cos, tan, sec, cot, csc, EXP, !, abs, Rec, Pol, 10^x, log, ln, sqrt
-funcCounts = [0 for i in range(16)]
+funcCounts = [0 for i in range(16)] # type: ignore # type: ignore
 
 """
 digit value: 0
@@ -71,19 +71,19 @@ This means that the code will break if you include more than 10 of the same func
 """
 # I have not placed any restrictions when it comes to characters on the right side as the input goes from left to right
 
-def insertParantheses(val):
+def insertParantheses(val): # type: ignore
     global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal
     leftStr.append("(")
-    leftVal.append(val)
+    leftVal.append(val) # type: ignore
     leftChar = "("
-    rightStr.insert(0,")")
-    rightVal.insert(0,val)
+    rightStr.insert(0,")") # type: ignore
+    rightVal.insert(0,val) # type: ignore
     rightChar = ")"
 
-def buttons_pressed(value):
+def buttons_pressed(value): # type: ignore
     global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal, funcCounts
     if (value in right_buttons):
-        match (value):
+        match (value): # type: ignore
             case "AC":
                 # Reset everything
                 leftStr = ["0"]
@@ -102,7 +102,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("exp")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             case "Ans":
                 ...
@@ -136,9 +136,9 @@ def buttons_pressed(value):
             if len(leftStr) == 1 and leftChar == "0":
                 leftStr[-1] = value
             else:
-                leftStr.append(value)
+                leftStr.append(value) # type: ignore
                 leftVal.append(0)
-            leftChar = value
+            leftChar = value # type: ignore
         elif value == ".":
             canPlace = True
             # Go backwards through leftStr
@@ -185,9 +185,9 @@ def buttons_pressed(value):
             try:
                 result = eval(displayString)
             except SyntaxError as err:
-                messagebox.showerror("ERROR: Cannot compute", f"The calculator was unable to compute the given expression\nPlease change it and try again\nError Message: {err}")
+                messagebox.showerror("ERROR: Cannot compute", f"The calculator was unable to compute the given expression\nPlease change it and try again\nError Message: {err}") # type: ignore
             except Exception as err:
-                messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}")
+                messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}") # type: ignore
             else:
                 if type(result) == tuple:
                     result = f"{result[0]:.6f}, {result[1]:.6f}"
@@ -206,26 +206,26 @@ def buttons_pressed(value):
                 rightVal = []
                 rightChar = None
                 for i in str(result):
-                    leftStr.append(i)
+                    leftStr.append(i) # type: ignore
                     if i == "-":
-                        leftVal.append(2)
+                        leftVal.append(2) # type: ignore
                     elif i == ".":
-                        leftVal.append(1)
+                        leftVal.append(1) # type: ignore
                     else:
-                        leftVal.append(0)
-                leftChar = leftStr[-1]
-                funcCounts = [0 for i in range(16)]
+                        leftVal.append(0) # type: ignore
+                leftChar = leftStr[-1] # type: ignore
+                funcCounts = [0 for i in range(16)] # type: ignore
                 return None
             
     elif (value in function_buttons):
-        match (value):
+        match (value): # type: ignore
             case "←":
                 if (leftStr != []):
                     storeStr = leftStr.pop()
                     storeVal = leftVal.pop()
-                    rightStr.insert(0, storeStr)
-                    rightVal.insert(0, storeVal)
-                    rightChar = rightStr[0]
+                    rightStr.insert(0, storeStr) # type: ignore
+                    rightVal.insert(0, storeVal) # type: ignore
+                    rightChar = rightStr[0] # type: ignore
                     if (leftStr == []):
                         leftChar = None
                     else:
@@ -233,15 +233,15 @@ def buttons_pressed(value):
 
             case "→":
                 if (rightStr != []):
-                    storeStr = rightStr.pop(0)
-                    storeVal = rightVal.pop(0)
-                    leftStr.append(storeStr)
-                    leftVal.append(storeVal)
+                    storeStr = rightStr.pop(0) # type: ignore
+                    storeVal = rightVal.pop(0) # type: ignore
+                    leftStr.append(storeStr) # type: ignore
+                    leftVal.append(storeVal) # type: ignore
                     leftChar = leftStr[-1]
                     if (rightStr == []):
                         rightChar = None
                     else:
-                        rightChar = rightStr[0]
+                        rightChar = rightStr[0] # type: ignore
             
             case "(":
                 if (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0"):
@@ -260,7 +260,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("sin")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
 
             case "Cos":
@@ -271,7 +271,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("cos")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
                     
 
@@ -283,7 +283,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("tan")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "Csc":
@@ -294,7 +294,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("csc")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "Sec":
@@ -305,7 +305,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("sec")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "Cot":
@@ -316,7 +316,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("cot")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "!":
@@ -326,8 +326,8 @@ def buttons_pressed(value):
                     if leftChar == "0":
                         leftStr.pop()
                         leftVal.pop()
-                    rightStr.insert(0, "!")
-                    rightVal.insert(0, val)
+                    rightStr.insert(0, "!") # type: ignore
+                    rightVal.insert(0, val) # type: ignore
                     insertParantheses(val)
 
             case "abs":
@@ -338,7 +338,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("abs")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "Rec()":
@@ -348,10 +348,10 @@ def buttons_pressed(value):
                     leftStr.pop()
                     leftVal.pop()
                     leftStr += list("Rec")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
-                    rightStr.insert(0, ",")
-                    rightVal.insert(0,3)
+                    rightStr.insert(0, ",") # type: ignore
+                    rightVal.insert(0,3) # type: ignore
                     rightChar = ","
 
             case "Pol()":
@@ -361,10 +361,10 @@ def buttons_pressed(value):
                     leftStr.pop()
                     leftVal.pop()
                     leftStr += list("Pol")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
-                    rightStr.insert(0, ",")
-                    rightVal.insert(0,3)
+                    rightStr.insert(0, ",") # type: ignore
+                    rightVal.insert(0,3) # type: ignore
                     rightChar = ","
 
             case "10^x":
@@ -375,7 +375,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("10^")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "^":
@@ -408,7 +408,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("log")
-                    leftVal.extend([val for i in range(3)])
+                    leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "ln":
@@ -419,7 +419,7 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("ln")
-                    leftVal.extend([val for i in range(2)])
+                    leftVal.extend([val for i in range(2)]) # type: ignore
                     insertParantheses(val)
             
             case "√":
@@ -430,14 +430,14 @@ def buttons_pressed(value):
                         leftStr.pop()
                         leftVal.pop()
                     leftStr += list("√")
-                    leftVal.extend([val for i in range(1)])
+                    leftVal.extend([val for i in range(1)]) # type: ignore
                     insertParantheses(val)
             
     displayString = ""
     for i in leftStr:
         displayString += i
-    for i in rightStr:
-        displayString += i
+    for i in rightStr: # type: ignore
+        displayString += i # type: ignore
     
     label["text"] = displayString
 
