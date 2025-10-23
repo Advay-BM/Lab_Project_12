@@ -16,6 +16,7 @@ Value_buttons=[("!","abs","RCL","Hyp","Inv"),   #all the functions present in th
 right_buttons=  ["AC","÷","x","-","+","DEL","EXP","Ans"]
 digit_buttons=     ["0","1","2","3","4","5","6","7","8","9",".","=",]
 function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","M+","→","nCr", "Rec()","Sin","Cos","Tan","Pol()", "DEG","Csc","Sec","Cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
+non_enforced_buttons= ["AC", "DEL", "←", "→"]
 Light_blue="#ADD8E6"
 Light_grey="#D3D3D3"
 Pink="#FFC0CB"
@@ -79,6 +80,10 @@ def insertParantheses(val): # type: ignore
 
 def buttons_pressed(value): # type: ignore
     global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal, funcCounts
+
+    if len(label["text"]) >= 25 and value not in non_enforced_buttons:         # Character limit
+        return None
+
     if (value in right_buttons):
         match (value): # type: ignore
             case "AC":
@@ -169,8 +174,10 @@ def buttons_pressed(value): # type: ignore
             for i in range(len(array)):
                 match array[i]:
                     case "x":
-                        if array[i-1] != "e":
+                        if array[i-1] != "e" or array[i+1] != "p":
                             displayString += "*"
+                        else:
+                            displayString += "x"
                     case "^":
                         displayString += "**"
                     case "π":
