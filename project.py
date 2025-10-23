@@ -190,6 +190,10 @@ def buttons_pressed(value): # type: ignore
                 result = eval(displayString)
             except SyntaxError as err:
                 messagebox.showerror("ERROR: Cannot compute", f"The calculator was unable to compute the given expression\nPlease change it and try again\nError Message: {err}") # type: ignore
+            except ZeroDivisionError as err:
+                messagebox.showerror("ERROR: Division by zero",f"Calculation could not be completed as there was an instance of division by zero\nError Message: {err}")
+            except OverflowError as err:
+                messagebox.showerror("Error: Invalid input to inverse functions",f"The input to an inverse function was not valid, i.e, it is outside the orginal functions range\nError Message: {err}")
             except Exception as err:
                 messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}") # type: ignore
             else:
@@ -202,6 +206,9 @@ def buttons_pressed(value): # type: ignore
                         label["text"] += "0"
                 else:
                     label["text"] = str(result)
+
+                if label["text"] == "inf":
+                    messagebox.showwarning("WARNING: Infinity", "The calculation resulted in infinity\nPlease do not save the result or attempt further calculation to avoid errors\nPress the AC button to continue using the calculator")
                 
                 # Reset input label to hold result
                 leftStr = []

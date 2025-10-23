@@ -6,7 +6,7 @@ import sympy as s
 pi = 3.141592653589793
 e =  2.718281828459045
 twoPi = 6.283185307179586
-
+epsilon = 0.0000000001
 # Function definitions
 # Arithmetic
 def power(base, exponent): # type: ignore # type: ignore
@@ -62,15 +62,49 @@ def cos(x): # type: ignore # type: ignore
     return sign*(out+do) # type: ignore
 
 def tan(x): # type: ignore
+    while x > pi:
+        x -= pi
+    while x < -pi:
+        x += pi
+    if (abs(pi/2 - x) <= epsilon):
+        return float('inf')
+    elif (abs(pi/2 + x) <= epsilon):
+        return float('inf')
     return sin(x)/cos(x) # type: ignore
 
 def sec(x): # type: ignore # type: ignore
+    while x > twoPi:
+        x -= twoPi # type: ignore
+    while x < 0:
+        x += twoPi # type: ignore
+    if (abs(pi/2 - x) <= epsilon):
+        return float('inf')
+    elif (abs(3*pi/2 - x) <= epsilon):
+        return float('inf')
     return 1/cos(x) # type: ignore
 
 def cot(x): # type: ignore
+    while x > pi:
+        x -= pi
+    while x < 0:
+        x += pi
+    if (abs(pi - x) <= epsilon):
+        return float('inf')
+    elif (abs(x) <= epsilon):
+        return float('inf')
     return cos(x)/sin(x) # type: ignore
 
 def csc(x): # type: ignore
+    while x > twoPi:
+        x -= twoPi # type: ignore
+    while x < 0:
+        x += twoPi # type: ignore
+    if (abs(pi - x) <= epsilon):
+        return float('inf')
+    elif (abs(twoPi - x) <= epsilon):
+        return float('inf')
+    elif (abs(x) <= epsilon):
+        return float('inf')
     return 1/sin(x) # type: ignore
 
 # Other
@@ -143,39 +177,66 @@ def nCr(n, r): # type: ignore
 
 # Inverse trig
 def asin(x): # type: ignore
+    if x > 1 and x < -1:
+        raise OverflowError
+
     return n.arcsin(x) # type: ignore
 
 def acos(x): # type: ignore
+    if x > 1 and x < -1:
+        raise OverflowError
+    
     return n.arccos(x) # type: ignore
 
 def atan(x): # type: ignore
     return n.arctan(x) # type: ignore
 
 def asec(x): # type: ignore
+    if x < 1 and x > -1:
+        raise OverflowError
+    
     return s.asec(x) # type: ignore
 
 def acot(x): # type: ignore
     return s.cot(x) # type: ignore
 
 def acsc(x): # type: ignore
+    if x < 1 and x > -1:
+        raise OverflowError
+
     return s.acsc(x) # type: ignore
 
 def asinh(x): # type: ignore
     return n.arcsinh(x) # type: ignore
 
 def acosh(x): # type: ignore
+    if x < 1:
+        raise OverflowError
+    
     return n.arccosh(x) # type: ignore
 
 def atanh(x): # type: ignore
+    if x >= 1 and x <= -1:
+        raise OverflowError
+    
     return n.arctanh(x) # type: ignore
 
 def assech(x): # type: ignore
+    if x <= 0 and x > 1:
+        raise OverflowError
+
     return s.asech(x) # type: ignore
 
 def acoth(x): # type: ignore
+    if x <= 1 and x >= -1:
+        raise OverflowError
+
     return s.coth(x) # type: ignore
 
 def acsch(x): # type: ignore
+    if x == 0:
+        raise OverflowError
+    
     return s.acsch(x) # type: ignore
 
 # if __name__ == "__main__":
