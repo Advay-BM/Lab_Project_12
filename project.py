@@ -50,13 +50,131 @@ A = "0"
 B = None
 operator = None
 
+leftStr = ["0"]
+leftVal = [0]
+rightStr = []
+rightVal = []
+leftChar = "0"
+rightChar = None
+
+"""
+digit value: 0
+decimal value: 1
++ - x /: 2
+"""
+# I have not placed any restrictions when it comes to characters on the right side as the input goes from left to right
+
 def buttons_pressed(value):
+    global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal
     if (value in right_buttons):
-        ...
+        match (value):
+            case "AC":
+                # Reset everything
+                leftStr = ["0"]
+                leftVal = [0]
+                rightStr = []
+                rightVal = []
+                leftChar = "0"
+                rightChar = None
+            case "DEL":
+                ...
+            case "EXP":
+                ...
+            case "Ans":
+                ...
+            case "+":
+                # Should only be allowed if character to te left is not a decimal or another operator
+                if leftVal[-1] != 2 and leftVal[-1] != 1:
+                    leftChar = "+"
+                    leftVal.append(2)
+                    leftStr.append("+")
+            case "-":
+                # Same restriction as +
+                if leftVal[-1] != 2 and leftVal[-1] != 1:
+                    leftChar = "-"
+                    leftVal.append(2)
+                    leftStr.append("-")
+            case "x":
+                # Should only be allowed if character to left is a digit
+                if leftVal[-1] == 0:
+                    leftChar = "x"
+                    leftVal.append(2)
+                    leftStr.append("x")
+            case "÷":
+                # Same restriction as x
+                if leftVal[-1] == 0:
+                    leftChar = "/"
+                    leftVal.append(2)
+                    leftStr.append("/")
+    
     elif (value in digit_buttons):
-        ...
+        if value in "0123456789":
+            if leftChar == "0":
+                leftStr[-1] = value
+            else:
+                leftStr.append(value)
+                leftVal.append(0)
+            leftChar = value
+        elif value == ".":
+            canPlace = True
+            for i in range(-1, -len(leftVal)-1, -1):
+                if leftVal[i] == 1:
+                    canPlace = False
+                    break
+                if leftVal[i] != 0:
+                    break
+
+            if leftVal[-1] == 0 and canPlace:
+                leftChar = "."
+                leftVal.append(1)
+                leftStr.append(".")
+        else:
+            # Display result
+            displayString = ""
+            for i in range(len(leftStr)):
+                if leftStr[i] == "x":
+                    displayString += "*"
+                elif leftStr[i] == "÷":
+                    displayString += "/"
+                else:
+                    displayString += leftStr[i]
+            for i in rightStr:
+                if rightStr[i] == "x":
+                    displayString += "*"
+                elif rightStr[i] == "÷":
+                    displayString += "/"
+                else:
+                    displayString += rightStr[i]
+            result = eval(displayString)
+            label["text"] = str(result)
+
+            # Reset input label to hold result
+            leftStr = []
+            leftVal = []
+            rightStr = []
+            rightVal = []
+            rightChar = None
+            for i in str(result):
+                leftStr.append(i)
+                if i == "-":
+                    leftVal.append(2)
+                elif i == ".":
+                    leftVal.append(1)
+                else:
+                    leftVal.append(0)
+            leftChar = leftStr[-1]
+            return None
     elif (value in function_buttons):
         ...
+
+    displayString = ""
+    for i in leftStr:
+        displayString += i
+    for i in rightStr:
+        displayString += i
+    
+    label["text"] = displayString
+
 
 tab.mainloop()
 

@@ -1,4 +1,5 @@
 import numpy as n
+import sympy as s
 from time import perf_counter
 
 # Const Definitions
@@ -8,21 +9,6 @@ twoPi = 6.283185307179586
 
 # Function definitions
 # Arithmetic
-def add(x, y):
-    return x + y
-
-def sub(x, y):
-    return x - y
-
-def mul(x, y):
-    return x*y
-
-def div(x, y):
-    return x/y
-
-def mod(x, y):
-    return x % y
-
 def power(base, exponent):
     return base**exponent
 
@@ -84,7 +70,7 @@ def sec(x):
 def cot(x):
     return cos(x)/sin(x)
 
-def cosec(x):
+def csc(x):
     return 1/sin(x)
 
 # Other
@@ -105,7 +91,7 @@ def factorial(x):
         out *= i
     return out
 
-def log10(x):
+def log(x):
     return n.log10(x)
 
 def ln(x):
@@ -113,6 +99,22 @@ def ln(x):
 
 def sqrt(x):
     return x**(0.5)
+
+def Pol(x, y):
+    r = (x**2 + y**2)**(0.5)
+    theta = n.atan2(y,x)
+    return (r, theta)
+
+def Rec(r, theta):
+    x = r*cos(theta)
+    y = r*sin(theta)
+    return (x, y)
+
+def w10x(x):
+    return 10**x
+
+def nRoot(n, x):
+    return x**(1/n)
 
 # Hyperbolic trig
 
@@ -131,7 +133,7 @@ def sech(x):
 def coth(x):
     return cosh(x)/sinh(x)
 
-def cosech(x):
+def csch(x):
     return 1/sinh(x)
 
 # Permutations and combinations
@@ -143,26 +145,42 @@ def nCr(n, r):
     return factorial(n)/(factorial(r)*factorial(n-r))
 
 # Inverse trig
-def arcsin(x):
+def asin(x):
     return n.arcsin(x)
 
-def arccos(x):
+def acos(x):
     return n.arccos(x)
 
-def arctan(x):
+def atan(x):
     return n.arctan(x)
 
-def arcsinh(x):
+def asec(x):
+    return s.asec(x)
+
+def acot(x):
+    return s.cot(x)
+
+def acsc(x):
+    return s.acsc(x)
+
+def asinh(x):
     return n.arcsinh(x)
 
-def arccosh(x):
+def acosh(x):
     return n.arccosh(x)
 
-def arctanh(x):
+def atanh(x):
     return n.arctanh(x)
 
+def assech(x):
+    return s.asech(x)
 
-n.sin
+def acoth(x):
+    return s.coth(x)
+
+def acsch(x):
+    return s.acsch(x)
+
 if __name__ == "__main__":
 
     for i in range(0,11,1):
