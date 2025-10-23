@@ -110,9 +110,6 @@ def Rec(r, theta):
     y = r*sin(theta)
     return (x, y)
 
-def w10x(x):
-    return 10**x
-
 def nRoot(n, x):
     return x**(1/n)
 

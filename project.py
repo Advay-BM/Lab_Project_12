@@ -1,10 +1,11 @@
 import tkinter
+from tkinter import messagebox
 from mathFunctions import *
 
 Value_buttons=[("!","abs","RCL","Hyp","Inv"),   #all the functions present in the calculator
                ("nPr","←","M+","→","nCr"),
                ("Rec()","Sin","Cos","Tan","Pol()"),
-               ("DEG","Csc","Sec","Cot","10^x"),
+               ("RAD","Csc","Sec","Cot","10^x"),
                ("log","√","e","n√","ln"),
                ("(",")","π","^","ENG"),
                ("7","8","9","DEL","AC"),
@@ -56,13 +57,17 @@ rightStr = []
 rightVal = []
 leftChar = "0"
 rightChar = None
-# (), sin, cos, tan, sec, cot, csc, EXP
-funcCounts = [0 for i in range(8)]
+#               0   1    2    3    4    5    6    7   8   9   10   11   12    13   14  15
+# Index order: (), sin, cos, tan, sec, cot, csc, EXP, !, abs, Rec, Pol, 10^x, log, ln, sqrt
+funcCounts = [0 for i in range(16)]
 
 """
 digit value: 0
-decimal value: 1
+. : 1
 + - x /: 2
+, : 3
+the value of a function is (x+1)*10 + funcCounts[x], where x is the corresponding index of the functions
+This means that the code will break if you include more than 10 of the same function
 """
 # I have not placed any restrictions when it comes to characters on the right side as the input goes from left to right
 
@@ -138,8 +143,8 @@ def buttons_pressed(value):
             canPlace = True
             # Go backwards through leftStr
             for i in range(-1, -len(leftVal)-1, -1):
-                if leftVal[i] == 1:
-                    # If we encounter another decimal point, do not allow to place
+                if leftVal[i] == 1 or leftVal[i] == 3:
+                    # If we encounter another decimal point or a comma, do not allow to place
                     canPlace = False
                     break
                 if leftVal[i] != 0:
@@ -153,37 +158,65 @@ def buttons_pressed(value):
         else:
             # Display result
             displayString = ""
-            for i in range(len(leftStr)):
-                if leftStr[i] == "x" and leftStr[i-1] != "e":
-                    displayString += "*"
-                else:
-                    displayString += leftStr[i]
-            for i in range(len(rightStr)):
-                if rightStr[i] == "x":
-                    displayString += "*"
-                else:
-                    displayString += rightStr[i]
-            print(displayString)
-            result = eval(displayString)
-            label["text"] = str(result)
+            # Move everything to a single array
+            array = leftStr + rightStr
+            arrayVals = leftVal + rightVal
 
-            # Reset input label to hold result
-            leftStr = []
-            leftVal = []
-            rightStr = []
-            rightVal = []
-            rightChar = None
-            for i in str(result):
-                leftStr.append(i)
-                if i == "-":
-                    leftVal.append(2)
-                elif i == ".":
-                    leftVal.append(1)
+            for i in range(array.count("!")):
+                index = array.index("!")
+                array.pop(index)
+                paranthesesVal = arrayVals[index-1]
+                paranthesesIndex = arrayVals.index(paranthesesVal)
+                array[paranthesesIndex:paranthesesIndex] = list("factorial")
+
+            for i in range(len(array)):
+                match array[i]:
+                    case "x":
+                        if array[i-1] != "e":
+                            displayString += "*"
+                    case "^":
+                        displayString += "**"
+                    case "π":
+                        displayString += "pi"
+                    case "√":
+                        displayString += "sqrt"
+                    case _:
+                        displayString += array[i]
+            try:
+                result = eval(displayString)
+            except SyntaxError as err:
+                messagebox.showerror("ERROR: Cannot compute", f"The calculator was unable to compute the given expression\nPlease change it and try again\nError Message: {err}")
+            except Exception as err:
+                messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}")
+            else:
+                if type(result) == tuple:
+                    result = f"{result[0]:.6f}, {result[1]:.6f}"
+                    label["text"] = result
+                elif type(result) == float:
+                    label["text"] = f"{result:.6f}".rstrip("0")
+                    if label["text"][-1] == ".":
+                        label["text"] += "0"
                 else:
-                    leftVal.append(0)
-            leftChar = leftStr[-1]
-            funcCounts = [0 for i in range(7)]
-            return None
+                    label["text"] = str(result)
+                
+                # Reset input label to hold result
+                leftStr = []
+                leftVal = []
+                rightStr = []
+                rightVal = []
+                rightChar = None
+                for i in str(result):
+                    leftStr.append(i)
+                    if i == "-":
+                        leftVal.append(2)
+                    elif i == ".":
+                        leftVal.append(1)
+                    else:
+                        leftVal.append(0)
+                leftChar = leftStr[-1]
+                funcCounts = [0 for i in range(16)]
+                return None
+            
     elif (value in function_buttons):
         match (value):
             case "←":
@@ -285,9 +318,121 @@ def buttons_pressed(value):
                     leftStr += list("cot")
                     leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
+            
+            case "!":
+                if (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0"):
+                    val = 90
+                    val += funcCounts[8]
+                    if leftChar == "0":
+                        leftStr.pop()
+                        leftVal.pop()
+                    rightStr.insert(0, "!")
+                    rightVal.insert(0, val)
+                    insertParantheses(val)
 
+            case "abs":
+                if (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0"):
+                    val = 100
+                    val += funcCounts[9]
+                    if leftChar == "0":
+                        leftStr.pop()
+                        leftVal.pop()
+                    leftStr += list("abs")
+                    leftVal.extend([val for i in range(3)])
+                    insertParantheses(val)
+            
+            case "Rec()":
+                if (len(leftStr) == 1 and leftChar == "0"):
+                    val = 110
+                    val += funcCounts[10]
+                    leftStr.pop()
+                    leftVal.pop()
+                    leftStr += list("Rec")
+                    leftVal.extend([val for i in range(3)])
+                    insertParantheses(val)
+                    rightStr.insert(0, ",")
+                    rightVal.insert(0,3)
+                    rightChar = ","
 
+            case "Pol()":
+                if (len(leftStr) == 1 and leftChar == "0"):
+                    val = 120
+                    val += funcCounts[11]
+                    leftStr.pop()
+                    leftVal.pop()
+                    leftStr += list("Pol")
+                    leftVal.extend([val for i in range(3)])
+                    insertParantheses(val)
+                    rightStr.insert(0, ",")
+                    rightVal.insert(0,3)
+                    rightChar = ","
 
+            case "10^x":
+                 if (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0"):
+                    val = 130
+                    val += funcCounts[12]
+                    if leftChar == "0":
+                        leftStr.pop()
+                        leftVal.pop()
+                    leftStr += list("10^")
+                    leftVal.extend([val for i in range(3)])
+                    insertParantheses(val)
+            
+            case "^":
+                if leftVal[-1] != 2 and leftVal[-1] != 1 and leftChar != "(":
+                    leftChar = "^"
+                    leftVal.append(2)
+                    leftStr.append("^")
+
+            case "e":
+                if len(leftStr) == 1 and leftChar == "0":
+                    leftStr[-1] = value
+                else:
+                    leftStr.append(value)
+                    leftVal.append(0)
+                leftChar = value
+            
+            case "π":
+                if len(leftStr) == 1 and leftChar == "0":
+                    leftStr[-1] = value
+                else:
+                    leftStr.append(value)
+                    leftVal.append(0)
+                leftChar = value
+            
+            case "log":
+                if (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0"):
+                    val = 140
+                    val += funcCounts[13]
+                    if leftChar == "0":
+                        leftStr.pop()
+                        leftVal.pop()
+                    leftStr += list("log")
+                    leftVal.extend([val for i in range(3)])
+                    insertParantheses(val)
+            
+            case "ln":
+                if (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0"):
+                    val = 150
+                    val += funcCounts[14]
+                    if leftChar == "0":
+                        leftStr.pop()
+                        leftVal.pop()
+                    leftStr += list("ln")
+                    leftVal.extend([val for i in range(2)])
+                    insertParantheses(val)
+            
+            case "√":
+                if (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0"):
+                    val = 160
+                    val += funcCounts[15]
+                    if leftChar == "0":
+                        leftStr.pop()
+                        leftVal.pop()
+                    leftStr += list("√")
+                    leftVal.extend([val for i in range(1)])
+                    insertParantheses(val)
+            
     displayString = ""
     for i in leftStr:
         displayString += i
@@ -296,6 +441,4 @@ def buttons_pressed(value):
     
     label["text"] = displayString
 
-
 tab.mainloop()
-
