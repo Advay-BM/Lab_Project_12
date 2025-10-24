@@ -1,58 +1,29 @@
-import tkinter
-from tkinter import Radiobutton, messagebox
+from tkinter import messagebox
 from mathFunctions import *
+from definitions import *
 
 # To do:
-# RCL, M+, Hyp, Inv, RAD, DEL
+# RCL, M+, DEL
 
-Value_buttons=[("!","abs","RCL","Hyp","Inv"),   #all the functions present in the calculator
-               ("nPr","←","M+","→","nCr"),
-               ("Rec()","Sin","Cos","Tan","Pol()"),
-               ("RAD","Csc","Sec","Cot","10^x"),
-               ("log","√","e","n√","ln"),
-               ("(",")","π","^","ENG"),
-               ("7","8","9","DEL","AC"),
-               ("4","5","6","x","÷"),
-               ("1","2","3","+","-"),
-               ("0",".","=","Ans","EXP")]
-
-right_buttons=  ["AC","÷","x","-","+","DEL","EXP","Ans"]
-digit_buttons=     ["0","1","2","3","4","5","6","7","8","9",".","=",]
-function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","M+","→","nCr", "Rec()","Sin","Cos","Tan","Pol()", "RAD","Csc","Sec","Cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
-non_enforced_buttons= ["AC", "DEL", "←", "→"]
-spcl_buttons = ["RAD", "Hyp", "Inv"]
-Light_blue="#ADD8E6"
-Light_grey="#D3D3D3"
-Pink="#FFC0CB"
-row_count= len(Value_buttons)
-column_count= len(Value_buttons[0])
-
-tab=tkinter.Tk()
 tab.title("SCIENTIFIC CALCULATOR")
 
-frame= tkinter.Frame(tab)
-label= tkinter.Label(frame, text="0|", font=("arial",20), background="black",
-                     foreground="white", anchor="e", width= column_count,height= 2)
 label.grid(row=0,column=0, columnspan=column_count, sticky="we")
 
-
-RADLambda = lambda v = "RAD": buttons_pressed(v)
-DEGLambda = lambda v = "DEG": buttons_pressed(v)
-RADButton = tkinter.Button(frame, text="RAD", font=("arial",20),
-                               width=column_count-1, height=1,
-                               command= RADLambda, foreground="black", background=Light_grey)
+RADButton.config(command= lambda v = "RAD": buttons_pressed(v))
 RADButton.grid(row= 4, column= 0)
 
-HypButton = tkinter.Button(frame, text="Hyp", font=("arial",20),
-                               width=column_count-1, height=1,
-                               command=lambda value="Hyp": buttons_pressed(value), foreground="black", background=Light_grey)
-HypButton.grid(row= 1, column= 3)
-
-InvButton = tkinter.Button(frame, text="Inv", font=("arial",20),
-                               width=column_count-1, height=1,
-                               command=lambda value="Inv": buttons_pressed(value), foreground="black", background=Light_grey)
-InvButton.grid(row= 1, column= 4)
-
+sinButton.config(command= lambda v = "sin": buttons_pressed(v))
+sinButton.grid(row= 3, column= 1)
+cosButton.config(command= lambda v = "cos": buttons_pressed(v))
+cosButton.grid(row= 3, column= 2)
+tanButton.config(command= lambda v = "tan": buttons_pressed(v))
+tanButton.grid(row= 3, column= 3)
+cscButton.config(command= lambda v = "csc": buttons_pressed(v))
+cscButton.grid(row= 4, column= 3)
+secButton.config(command= lambda v = "sec": buttons_pressed(v))
+secButton.grid(row= 4, column= 1)
+cotButton.config(command= lambda v = "cot": buttons_pressed(v))
+cotButton.grid(row= 4, column= 2)
 
 for row in range(row_count):
     for column in range(column_count):
@@ -71,21 +42,7 @@ for row in range(row_count):
                 buttons.config(foreground="black", background=Light_grey)
             buttons.grid(row=row+1, column=column)
             
-
-        
 frame.pack()
-
-leftStr = ["0"]
-leftVal = [0]
-rightStr = []
-rightVal = []
-leftChar = "0"
-rightChar = None
-#               0   1    2    3    4    5    6    7   8   9   10   11    12   13   14   15    16    17   18
-# Index order: (), sin, cos, tan, sec, cot, csc, EXP, !, abs, Rec, Pol, 10^x, log, ln, sqrt, nRoot, nPr, nCr
-funcCounts = [0 for i in range(19)] # type: ignore # type: ignore
-a = None
-RADMode = True
 
 """
 digit value: 0
@@ -119,9 +76,17 @@ def initStdFunc(ind):
     funcCounts[ind] += 1
     return val
 
+def changeTrigButtonText(prefix = "", suffix = ""):
+    global sinButton, cosButton, tanButton, secButton, cotButton, cscButton
+    sinButton.config(text= f"{prefix}sin{suffix}")
+    cosButton.config(text= f"{prefix}cos{suffix}")
+    tanButton.config(text= f"{prefix}tan{suffix}")
+    cscButton.config(text= f"{prefix}csc{suffix}")
+    secButton.config(text= f"{prefix}sec{suffix}")
+    cotButton.config(text= f"{prefix}cot{suffix}")
+
 def buttons_pressed(value): # type: ignore
-    global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal, funcCounts, a, RADButton, RADMode, RADLambda, DEGLambda
-    
+    global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal, funcCounts, a, RADButton, RADMode, sinButton, cosButton, tanButton, secButton, cotButton, cscButton, HypMode, InvMode
     if len(label["text"]) >= 25 and value not in non_enforced_buttons:         # Character limit
         return None
 
@@ -221,6 +186,8 @@ def buttons_pressed(value): # type: ignore
 
             for i in range(array.count("P")):
                 index = array.index("P")
+                if array[index+1] == "o":
+                    break
                 array[index] = "p"
                 paranthesesVal = arrayVals[index-1]
                 paranthesesIndexn = arrayVals.index(paranthesesVal)
@@ -249,6 +216,42 @@ def buttons_pressed(value): # type: ignore
                 array[paranthesesIndexn: index] = "n"
                 arrayVals[paranthesesIndexn: index] = [paranthesesVal]
 
+            if not (RADMode):
+                arrayVals = arrayVals[::-1]
+                array = array[::-1]
+                for i in range(0,10):
+                    if (arrayVals.count(20+i)) > 0:
+                        index = arrayVals.index(20+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 20 + i)
+
+                    if (arrayVals.count(30+i)) > 0:
+                        index = arrayVals.index(30+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 30 + i)
+
+                    if (arrayVals.count(40+i)) > 0:
+                        index = arrayVals.index(40+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 40 + i)
+
+                    if (arrayVals.count(50+i)) > 0:
+                        index = arrayVals.index(50+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 50 + i)
+
+                    if (arrayVals.count(60+i)) > 0:
+                        index = arrayVals.index(60+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 60 + i)
+
+                    if (arrayVals.count(70+i)) > 0:
+                        index = arrayVals.index(70+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 70 + i)
+                array = array[::-1]
+                arrayVals = arrayVals[::-1]
+
             for i in range(len(array)):
                 match array[i]:
                     case "x":
@@ -264,6 +267,7 @@ def buttons_pressed(value): # type: ignore
                         displayString += "sqrt"
                     case _:
                         displayString += array[i]
+
             try:
                 result = eval(displayString)
             except SyntaxError as err:
@@ -271,10 +275,12 @@ def buttons_pressed(value): # type: ignore
             except ZeroDivisionError as err:
                 messagebox.showerror("ERROR: Division by zero",f"Calculation could not be completed as there was an instance of division by zero.\nError Message: {err}")
             except OverflowError as err:
-                messagebox.showerror("Error: Invalid input to inverse functions",f"The input to an inverse function was not valid, i.e, it is outside the orginal functions range.\nError Message: {err}")
+                messagebox.showerror("Error: Invalid input",f"The input to a function was not valid, i.e, it is outside the function's domain.")
             except Exception as err:
                 messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}") # type: ignore
             else:
+                if f"{result:.6f}" == "-0.000000":
+                    result = 0
                 if type(result) == tuple:
                     result = f"{result[0]:.6f}, {result[1]:.6f}"
                     label["text"] = result
@@ -287,7 +293,7 @@ def buttons_pressed(value): # type: ignore
                     a = result
                     label["text"] = str(result)
 
-                if label["text"] == "inf":
+                if label["text"] == "inf" or label["text"] == "-inf":
                     a = None
                     messagebox.showwarning("WARNING: Infinity", "The calculation resulted in infinity\nPlease do not save the result or attempt further calculation to avoid errors\nPress the AC button to continue using the calculator")
                 
@@ -344,47 +350,107 @@ def buttons_pressed(value): # type: ignore
                     val = initStdFunc(0)
                     insertParantheses(val)
 
-            case "Sin":
+            case "sin":
                 if canPlaceStdFunc():
                     val = initStdFunc(1)
-                    leftStr += list("sin")
-                    leftVal.extend([val for i in range(3)]) # type: ignore
+                    if (InvMode and not(HypMode)):
+                        leftStr += list("asin")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and not(InvMode)):
+                        leftStr += list("sinh")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and InvMode):
+                        leftStr += list("asinh")
+                        leftVal.extend([val for i in range(5)]) # type: ignore
+                    else:
+                        leftStr += list("sin")
+                        leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
 
-            case "Cos":
+            case "cos":
                 if canPlaceStdFunc():
                     val = initStdFunc(2)
-                    leftStr += list("cos")
-                    leftVal.extend([val for i in range(3)]) # type: ignore
+                    if (InvMode and not(HypMode)):
+                        leftStr += list("acos")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and not(InvMode)):
+                        leftStr += list("cosh")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and InvMode):
+                        leftStr += list("acosh")
+                        leftVal.extend([val for i in range(5)]) # type: ignore
+                    else:
+                        leftStr += list("cos")
+                        leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
                     
 
-            case "Tan":
+            case "tan":
                 if canPlaceStdFunc():
                     val = initStdFunc(3)
-                    leftStr += list("tan")
-                    leftVal.extend([val for i in range(3)]) # type: ignore
+                    if (InvMode and not(HypMode)):
+                        leftStr += list("atan")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and not(InvMode)):
+                        leftStr += list("tanh")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and InvMode):
+                        leftStr += list("atanh")
+                        leftVal.extend([val for i in range(5)]) # type: ignore
+                    else:
+                        leftStr += list("tan")
+                        leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
-            case "Csc":
+            case "csc":
                 if canPlaceStdFunc():
                     val = initStdFunc(4)
-                    leftStr += list("csc")
-                    leftVal.extend([val for i in range(3)]) # type: ignore
+                    if (InvMode and not(HypMode)):
+                        leftStr += list("acsc")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and not(InvMode)):
+                        leftStr += list("csch")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and InvMode):
+                        leftStr += list("acsch")
+                        leftVal.extend([val for i in range(5)]) # type: ignore
+                    else:
+                        leftStr += list("csc")
+                        leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
-            case "Sec":
+            case "sec":
                 if canPlaceStdFunc():
                     val = initStdFunc(5)
-                    leftStr += list("sec")
-                    leftVal.extend([val for i in range(3)]) # type: ignore
+                    if (InvMode and not(HypMode)):
+                        leftStr += list("asec")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and not(InvMode)):
+                        leftStr += list("sech")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and InvMode):
+                        leftStr += list("asech")
+                        leftVal.extend([val for i in range(5)]) # type: ignore
+                    else:
+                        leftStr += list("sec")
+                        leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
-            case "Cot":
+            case "cot":
                 if canPlaceStdFunc():
                     val = initStdFunc(6)
-                    leftStr += list("cot")
-                    leftVal.extend([val for i in range(3)]) # type: ignore
+                    if (InvMode and not(HypMode)):
+                        leftStr += list("acot")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and not(InvMode)):
+                        leftStr += list("coth")
+                        leftVal.extend([val for i in range(4)]) # type: ignore
+                    elif (HypMode and InvMode):
+                        leftStr += list("acoth")
+                        leftVal.extend([val for i in range(5)]) # type: ignore
+                    else:
+                        leftStr += list("cot")
+                        leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "!":
@@ -543,15 +609,27 @@ def buttons_pressed(value): # type: ignore
                 return None
             
             case "RAD":
-                RADMode = False
-                RADButton.config(text= "DEG", command= DEGLambda)
-                function_buttons[15] = "DEG"
+                if (RADMode):
+                    RADMode = False
+                    RADButton.config(text= "DEG")
+                else:
+                    RADMode = True
+                    RADButton.config(text= "RAD")
             
-            case "DEG":
-                RADMode = True
-                RADButton.config(text= "RAD", command= RADLambda)
-                function_buttons[15] = "RAD"
-
+            case "Hyp":
+                HypMode = False if HypMode else True
+                
+            case "Inv":
+                InvMode = False if InvMode else True
+            
+    if (InvMode and not(HypMode)):
+        changeTrigButtonText(prefix= "a")
+    elif (HypMode and not(InvMode)):
+        changeTrigButtonText(suffix= "h")
+    elif (HypMode and InvMode):
+        changeTrigButtonText(prefix= "a", suffix= "h")
+    else:
+        changeTrigButtonText()
 
     displayString = ""
     for i in leftStr:

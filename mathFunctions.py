@@ -1,5 +1,4 @@
 import numpy as n
-import sympy as s
 # from time import perf_counter
 
 # Const Definitions
@@ -13,7 +12,9 @@ def power(base, exponent): # type: ignore # type: ignore
     return base**exponent # type: ignore
 
 # Trig
-def sin(x): # type: ignore
+def sin(x, rad = True): # type: ignore
+    if not (rad):
+        x = x * pi / 180
     sign: int = 1
     # Use properties of sin to reduce the value of x and also increase accuracy by bringing the value closer to 0
     while x > twoPi:
@@ -37,7 +38,9 @@ def sin(x): # type: ignore
         do *= -(x**2)/(i*(i-1)) # type: ignore
     return sign*(out + do) # type: ignore
 
-def cos(x): # type: ignore # type: ignore
+def cos(x, rad = True): # type: ignore # type: ignore
+    if not (rad):
+        x = x * pi / 180
     sign = 1
     # Use properties of cos to reduce the value of x and also increase accuracy by bringing the value closer to 0
     while x > twoPi:
@@ -61,7 +64,9 @@ def cos(x): # type: ignore # type: ignore
         do *= -(x**2)/(i*(i-1)) # type: ignore
     return sign*(out+do) # type: ignore
 
-def tan(x): # type: ignore
+def tan(x, rad = True): # type: ignore
+    if not (rad):
+        x = x * pi / 180
     while x > pi:
         x -= pi
     while x < -pi:
@@ -72,7 +77,9 @@ def tan(x): # type: ignore
         return float('inf')
     return sin(x)/cos(x) # type: ignore
 
-def sec(x): # type: ignore # type: ignore
+def sec(x, rad = True): # type: ignore # type: ignore
+    if not (rad):
+        x = x * pi / 180
     while x > twoPi:
         x -= twoPi # type: ignore
     while x < 0:
@@ -83,7 +90,9 @@ def sec(x): # type: ignore # type: ignore
         return float('inf')
     return 1/cos(x) # type: ignore
 
-def cot(x): # type: ignore
+def cot(x, rad = True): # type: ignore
+    if not (rad):
+        x = x * pi / 180
     while x > pi:
         x -= pi
     while x < 0:
@@ -117,6 +126,12 @@ def abs(x): # type: ignore
     return x # type: ignore
 
 def factorial(x): # type: ignore
+    if ((abs(x - n.floor(x)) > epsilon) or (abs(x - n.ceil(x)) > epsilon)) and (x == n.floor(x)):
+        raise OverflowError
+    x = int(x)
+    if (x < 0):
+        raise OverflowError
+
     if (x == 0):
         return 1
 
@@ -126,9 +141,17 @@ def factorial(x): # type: ignore
     return out
 
 def log(x): # type: ignore
+    if x == 0:
+        return float('-inf')
+    if x < 0:
+        raise OverflowError
     return n.log10(x) # type: ignore
 
 def ln(x): # type: ignore
+    if x == 0:
+        return float('-inf')
+    if x < 0:
+        raise OverflowError
     return n.log10(x)/n.log10(e) # type: ignore
 
 def sqrt(x): # type: ignore
@@ -149,22 +172,34 @@ def nRoot(n, x): # type: ignore
 
 # Hyperbolic trig
 
-def sinh(x): # type: ignore
+def sinh(x, rad = True): # type: ignore
+    if not (rad):
+        x = x * pi / 180
     return (exp(x)-exp(-x))/2 # type: ignore
 
-def cosh(x): # type: ignore
+def cosh(x, rad = True): # type: ignore
+    if not (rad):
+        x = x * pi / 180
     return (exp(x)+exp(-x))/2 # type: ignore
 
-def tanh(x): # type: ignore
+def tanh(x, rad = True): # type: ignore
+    if not (rad):
+        x = x * pi / 180
     return sinh(x)/cosh(x) # type: ignore
 
-def sech(x): # type: ignore # type: ignore
+def sech(x, rad = True): # type: ignore # type: ignore
+    if not (rad):
+        x = x * pi / 180
     return 1/cosh(x) # type: ignore
 
-def coth(x): # type: ignore
+def coth(x, rad = True): # type: ignore
+    if not (rad):
+        x = x * pi / 180
     return cosh(x)/sinh(x) # type: ignore
 
-def csch(x): # type: ignore
+def csch(x, rad = True): # type: ignore
+    if not (rad):
+        x = x * pi / 180
     return 1/sinh(x) # type: ignore
 
 # Permutations and combinations
@@ -176,68 +211,115 @@ def ncr(n, r): # type: ignore
     return int(factorial(n)/(factorial(r)*factorial(n-r))) # type: ignore
 
 # Inverse trig
-def asin(x): # type: ignore
-    if x > 1 and x < -1:
-        raise OverflowError
-
-    return n.arcsin(x) # type: ignore
-
-def acos(x): # type: ignore
-    if x > 1 and x < -1:
+def asin(x, rad = True): # type: ignore
+    if x > 1 or x < -1:
         raise OverflowError
     
-    return n.arccos(x) # type: ignore
+    result = n.arcsin(x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def atan(x): # type: ignore
-    return n.arctan(x) # type: ignore
+def acos(x, rad = True): # type: ignore
+    if x > 1 or x < -1:
+        raise OverflowError
+    
+    result = n.arccos(x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
+def atan(x, rad = True): # type: ignore
+    result = n.arctan(x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def asec(x): # type: ignore
+def asec(x, rad = True): # type: ignore
     if x < 1 and x > -1:
         raise OverflowError
     
-    return s.asec(x) # type: ignore
+    result = n.arccos(1/x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore # type: ignore
 
-def acot(x): # type: ignore
-    return s.cot(x) # type: ignore
+def acot(x, rad = True): # type: ignore
+    result = n.arctan(1/x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def acsc(x): # type: ignore
+def acsc(x, rad = True): # type: ignore
     if x < 1 and x > -1:
         raise OverflowError
 
-    return s.acsc(x) # type: ignore
+    result = n.arcsin(1/x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def asinh(x): # type: ignore
-    return n.arcsinh(x) # type: ignore
+def asinh(x, rad = True): # type: ignore
+    result = n.arcsinh(x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def acosh(x): # type: ignore
+def acosh(x, rad = True): # type: ignore
     if x < 1:
         raise OverflowError
     
-    return n.arccosh(x) # type: ignore
+    result = n.arccosh(x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def atanh(x): # type: ignore
-    if x >= 1 and x <= -1:
+def atanh(x, rad = True): # type: ignore
+    if x >= 1 or x <= -1:
         raise OverflowError
     
-    return n.arctanh(x) # type: ignore
+    result = n.arctanh(x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def assech(x): # type: ignore
-    if x <= 0 and x > 1:
+def asech(x, rad = True): # type: ignore
+    if x <= 0 or x > 1:
         raise OverflowError
 
-    return s.asech(x) # type: ignore
+    result = n.arccosh(1/x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def acoth(x): # type: ignore
+def acoth(x, rad = True): # type: ignore
     if x <= 1 and x >= -1:
         raise OverflowError
 
-    return s.coth(x) # type: ignore
+    result = n.arctanh(1/x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
-def acsch(x): # type: ignore
+def acsch(x, rad = True): # type: ignore
     if x == 0:
         raise OverflowError
     
-    return s.acsch(x) # type: ignore
+    result = n.arcsinh(1/x)
+    if not (rad):
+        result = result * 180 / pi
+    
+    return result # type: ignore
 
 # if __name__ == "__main__":
 
