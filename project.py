@@ -1,9 +1,9 @@
 import tkinter
-from tkinter import messagebox
+from tkinter import Radiobutton, messagebox
 from mathFunctions import *
 
 # To do:
-# RCL, M+, Hyp, Inv, RAD, ENG, DEL
+# RCL, M+, Hyp, Inv, RAD, DEL
 
 Value_buttons=[("!","abs","RCL","Hyp","Inv"),   #all the functions present in the calculator
                ("nPr","←","M+","→","nCr"),
@@ -18,8 +18,9 @@ Value_buttons=[("!","abs","RCL","Hyp","Inv"),   #all the functions present in th
 
 right_buttons=  ["AC","÷","x","-","+","DEL","EXP","Ans"]
 digit_buttons=     ["0","1","2","3","4","5","6","7","8","9",".","=",]
-function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","M+","→","nCr", "Rec()","Sin","Cos","Tan","Pol()", "DEG","Csc","Sec","Cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
+function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","M+","→","nCr", "Rec()","Sin","Cos","Tan","Pol()", "RAD","Csc","Sec","Cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
 non_enforced_buttons= ["AC", "DEL", "←", "→"]
+spcl_buttons = ["RAD", "Hyp", "Inv"]
 Light_blue="#ADD8E6"
 Light_grey="#D3D3D3"
 Pink="#FFC0CB"
@@ -30,24 +31,46 @@ tab=tkinter.Tk()
 tab.title("SCIENTIFIC CALCULATOR")
 
 frame= tkinter.Frame(tab)
-label= tkinter.Label(frame, text="0", font=("arial",20), background="black",
+label= tkinter.Label(frame, text="0|", font=("arial",20), background="black",
                      foreground="white", anchor="e", width= column_count,height= 2)
 label.grid(row=0,column=0, columnspan=column_count, sticky="we")
+
+
+RADLambda = lambda v = "RAD": buttons_pressed(v)
+DEGLambda = lambda v = "DEG": buttons_pressed(v)
+RADButton = tkinter.Button(frame, text="RAD", font=("arial",20),
+                               width=column_count-1, height=1,
+                               command= RADLambda, foreground="black", background=Light_grey)
+RADButton.grid(row= 4, column= 0)
+
+HypButton = tkinter.Button(frame, text="Hyp", font=("arial",20),
+                               width=column_count-1, height=1,
+                               command=lambda value="Hyp": buttons_pressed(value), foreground="black", background=Light_grey)
+HypButton.grid(row= 1, column= 3)
+
+InvButton = tkinter.Button(frame, text="Inv", font=("arial",20),
+                               width=column_count-1, height=1,
+                               command=lambda value="Inv": buttons_pressed(value), foreground="black", background=Light_grey)
+InvButton.grid(row= 1, column= 4)
+
+
 for row in range(row_count):
     for column in range(column_count):
         value=Value_buttons[row][column]
-        buttons=tkinter.Button(frame, text=value, font=("arial",20),
-                               width=column_count-1, height=1,
-                               command=lambda value=value: buttons_pressed(value))
-        if value in right_buttons:
-            buttons.config(foreground="black", background=Light_blue)
-        elif value in digit_buttons:
-            buttons.config(foreground="black", background=Pink)
-        elif value in function_buttons:
-            buttons.config(foreground="black", background=Light_grey)
-        else:
-            buttons.config(foreground="black", background=Light_grey)
-        buttons.grid(row=row+1, column=column)
+        if value not in spcl_buttons:
+            buttons=tkinter.Button(frame, text=value, font=("arial",20),
+                                width=column_count-1, height=1,
+                                command=lambda value=value: buttons_pressed(value))
+            if value in right_buttons:
+                buttons.config(foreground="black", background=Light_blue)
+            elif value in digit_buttons:
+                buttons.config(foreground="black", background=Pink)
+            elif value in function_buttons:
+                buttons.config(foreground="black", background=Light_grey)
+            else:
+                buttons.config(foreground="black", background=Light_grey)
+            buttons.grid(row=row+1, column=column)
+            
 
         
 frame.pack()
@@ -62,13 +85,14 @@ rightChar = None
 # Index order: (), sin, cos, tan, sec, cot, csc, EXP, !, abs, Rec, Pol, 10^x, log, ln, sqrt, nRoot, nPr, nCr
 funcCounts = [0 for i in range(19)] # type: ignore # type: ignore
 a = None
+RADMode = True
 
 """
 digit value: 0
 . : 1
 + - x /: 2
 , : 3
-the value of a function is (x+1)*10 + funcCounts[x], where x is the corresponding index of the functions
+the value of a function is (x+1)*10 + funcCounts[x], where x is the corresponding index of the functions in funcCounts
 This means that the code will break if you include more than 10 of the same function
 """
 # I have not placed any restrictions when it comes to characters on the right side as the input goes from left to right
@@ -86,9 +110,18 @@ def canPlaceStdFunc():
     global leftVal, leftStr, leftChar
     return (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0")
 
-def buttons_pressed(value): # type: ignore
-    global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal, funcCounts, a
+def initStdFunc(ind):
+    global funcCounts, leftChar, leftStr, leftVal
+    val = (ind+1)* 10 + funcCounts[ind]
+    if leftChar == "0":
+        leftStr.pop()
+        leftVal.pop()
+    funcCounts[ind] += 1
+    return val
 
+def buttons_pressed(value): # type: ignore
+    global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal, funcCounts, a, RADButton, RADMode, RADLambda, DEGLambda
+    
     if len(label["text"]) >= 25 and value not in non_enforced_buttons:         # Character limit
         return None
 
@@ -106,11 +139,7 @@ def buttons_pressed(value): # type: ignore
                 ...
             case "EXP":
                 if canPlaceStdFunc():
-                    val = 80
-                    val += funcCounts[7]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(7)
                     leftStr += list("exp")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
@@ -133,9 +162,12 @@ def buttons_pressed(value): # type: ignore
             case "-":
                 # Same restriction as +
                 if leftVal[-1] != 2 and leftVal[-1] != 1:
+                    if len(leftStr) == 1 and leftChar == "0":
+                        leftStr.pop()
+                        leftVal.pop()
                     leftChar = "-"
-                    leftVal.append(2)
                     leftStr.append("-")
+                    leftVal.append(2)
             case "x":
                 # Same restriction as + but additionally, x cannot prefix a number
                 if leftVal[-1] != 2 and leftVal[-1] != 1 and leftChar != "(":
@@ -189,25 +221,33 @@ def buttons_pressed(value): # type: ignore
 
             for i in range(array.count("P")):
                 index = array.index("P")
-                paranthesesValn = arrayVals[index-1]
-                paranthesesIndexn = arrayVals.index(paranthesesValn)
+                array[index] = "p"
+                paranthesesVal = arrayVals[index-1]
+                paranthesesIndexn = arrayVals.index(paranthesesVal)
                 paranthesesIndexr = index + 1
                 n = array[paranthesesIndexn:index]
 
                 array.insert(index+1, "r")
+                arrayVals.insert(index+1, paranthesesVal)
                 array[paranthesesIndexr+2:paranthesesIndexr+2] = n + [","]
+                arrayVals[paranthesesIndexr+2:paranthesesIndexr+2] = list([paranthesesVal for i in range(len(n))]) + [3]
                 array[paranthesesIndexn: index] = "n"
+                arrayVals[paranthesesIndexn: index] = [paranthesesVal]
 
             for i in range(array.count("C")):
                 index = array.index("C")
-                paranthesesValn = arrayVals[index-1]
-                paranthesesIndexn = arrayVals.index(paranthesesValn)
+                array[index] = "c"
+                paranthesesVal = arrayVals[index-1]
+                paranthesesIndexn = arrayVals.index(paranthesesVal)
                 paranthesesIndexr = index + 1
                 n = array[paranthesesIndexn:index]
 
                 array.insert(index+1, "r")
+                arrayVals.insert(index+1, paranthesesVal)
                 array[paranthesesIndexr+2:paranthesesIndexr+2] = n + [","]
+                arrayVals[paranthesesIndexr+2:paranthesesIndexr+2] = list([paranthesesVal for i in range(len(n))]) + [3]
                 array[paranthesesIndexn: index] = "n"
+                arrayVals[paranthesesIndexn: index] = [paranthesesVal]
 
             for i in range(len(array)):
                 match array[i]:
@@ -257,16 +297,20 @@ def buttons_pressed(value): # type: ignore
                 rightStr = []
                 rightVal = []
                 rightChar = None
+                funcCounts = [0 for i in range(19)] # type: ignore
                 for i in str(result):
                     leftStr.append(i) # type: ignore
-                    if i == "-":
-                        leftVal.append(2) # type: ignore
-                    elif i == ".":
-                        leftVal.append(1) # type: ignore
-                    else:
-                        leftVal.append(0) # type: ignore
+                    match (i):
+                        case "-":
+                            leftVal.append(2) # type: ignore
+                        case ".":
+                            leftVal.append(1) # type: ignore
+                        case ",":
+                            leftVal.append(3)
+                        case _:
+                            leftVal.append(0) # type: ignore
                 leftChar = leftStr[-1] # type: ignore
-                funcCounts = [0 for i in range(19)] # type: ignore
+                label["text"] += "|"
                 return None
             
     elif (value in function_buttons):
@@ -297,31 +341,19 @@ def buttons_pressed(value): # type: ignore
             
             case "(":
                 if canPlaceStdFunc():
-                    val = 10
-                    val += funcCounts[0]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(0)
                     insertParantheses(val)
 
             case "Sin":
                 if canPlaceStdFunc():
-                    val = 20
-                    val += funcCounts[1]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(1)
                     leftStr += list("sin")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
 
             case "Cos":
                 if canPlaceStdFunc():
-                    val = 30
-                    val += funcCounts[2]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(2)
                     leftStr += list("cos")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
@@ -329,76 +361,49 @@ def buttons_pressed(value): # type: ignore
 
             case "Tan":
                 if canPlaceStdFunc():
-                    val = 40
-                    val += funcCounts[3]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(3)
                     leftStr += list("tan")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "Csc":
                 if canPlaceStdFunc():
-                    val = 50
-                    val += funcCounts[4]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(4)
                     leftStr += list("csc")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "Sec":
                 if canPlaceStdFunc():
-                    val = 60
-                    val += funcCounts[5]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(5)
                     leftStr += list("sec")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "Cot":
                 if canPlaceStdFunc():
-                    val = 70
-                    val += funcCounts[6]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(6)
                     leftStr += list("cot")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "!":
                 if canPlaceStdFunc():
-                    val = 90
-                    val += funcCounts[8]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(8)
                     rightStr.insert(0, "!") # type: ignore
                     rightVal.insert(0, val) # type: ignore
                     insertParantheses(val)
 
             case "abs":
                 if canPlaceStdFunc():
-                    val = 100
-                    val += funcCounts[9]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(9)
                     leftStr += list("abs")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "Rec()":
                 if (len(leftStr) == 1 and leftChar == "0"):
-                    val = 110
-                    val += funcCounts[10]
-                    leftStr.pop()
-                    leftVal.pop()
+                    val = initStdFunc(10)
                     leftStr += list("Rec")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
@@ -408,10 +413,7 @@ def buttons_pressed(value): # type: ignore
 
             case "Pol()":
                 if (len(leftStr) == 1 and leftChar == "0"):
-                    val = 120
-                    val += funcCounts[11]
-                    leftStr.pop()
-                    leftVal.pop()
+                    val = initStdFunc(11)
                     leftStr += list("Pol")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
@@ -421,11 +423,7 @@ def buttons_pressed(value): # type: ignore
 
             case "10^x":
                  if canPlaceStdFunc():
-                    val = 130
-                    val += funcCounts[12]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(12)
                     leftStr += list("10^")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
@@ -454,44 +452,28 @@ def buttons_pressed(value): # type: ignore
             
             case "log":
                 if canPlaceStdFunc():
-                    val = 140
-                    val += funcCounts[13]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(13)
                     leftStr += list("log")
                     leftVal.extend([val for i in range(3)]) # type: ignore
                     insertParantheses(val)
             
             case "ln":
                 if canPlaceStdFunc():
-                    val = 150
-                    val += funcCounts[14]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(14)
                     leftStr += list("ln")
                     leftVal.extend([val for i in range(2)]) # type: ignore
                     insertParantheses(val)
             
             case "√":
                 if canPlaceStdFunc():
-                    val = 160
-                    val += funcCounts[15]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(15)
                     leftStr.append("√")
                     leftVal.append(val) # type: ignore
                     insertParantheses(val)
 
             case "n√":
                 if canPlaceStdFunc():
-                    val = 170
-                    val += funcCounts[16]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(16)
                     leftStr += list("nRoot")
                     leftVal.extend([val for i in range(5)]) # type: ignore
                     insertParantheses(val)
@@ -501,11 +483,8 @@ def buttons_pressed(value): # type: ignore
             
             case "nPr":
                 if canPlaceStdFunc():
-                    val = 180
-                    val += funcCounts[17]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(17)
+                    print(val)
                     insertParantheses(val)
                     rightStr.insert(1,"P")
                     rightVal.insert(1, val) # type: ignore
@@ -516,11 +495,7 @@ def buttons_pressed(value): # type: ignore
             
             case "nCr":
                 if canPlaceStdFunc():
-                    val = 190
-                    val += funcCounts[18]
-                    if leftChar == "0":
-                        leftStr.pop()
-                        leftVal.pop()
+                    val = initStdFunc(18)
                     insertParantheses(val)
                     rightStr.insert(1,"C")
                     rightVal.insert(1, val) # type: ignore
@@ -528,10 +503,60 @@ def buttons_pressed(value): # type: ignore
                     rightVal.insert(2, val) # type: ignore
                     rightStr.insert(3,")")
                     rightVal.insert(3, val) # type: ignore
+            
+            case "ENG":
+                array = leftStr + rightStr
+                arrayVals = leftVal+rightVal
+                for i in range(len(array)):
+                    if arrayVals[i] != 0 and arrayVals[i] != 1 and arrayVals[i] != 2:
+                        return None
+                
+                inp = float("".join(array))
+                magnitude = 0
+                while abs(inp) < 1:
+                    inp *= 10
+                    magnitude -= 1
+                while abs(inp) >= 10:
+                    inp /= 10
+                    magnitude += 1
+                label["text"] = f"{inp}x10^({magnitude})"
+                leftStr = []
+                leftVal = []
+                rightStr = []
+                rightVal = []
+                rightChar = None
+                funcCounts = [0 for i in range(19)] # type: ignore
+                for i in label["text"]:
+                    leftStr.append(i) # type: ignore
+                    match (i):
+                        case "-" | "x" | "^":
+                            leftVal.append(2) # type: ignore
+                        case ".":
+                            leftVal.append(1) # type: ignore
+                        case "(" | ")":
+                            leftVal.append(10)
+                            funcCounts[0] += 1
+                        case _:
+                            leftVal.append(0) # type: ignore
+                leftChar = leftStr[-1] # type: ignore
+                label["text"] += "|"
+                return None
+            
+            case "RAD":
+                RADMode = False
+                RADButton.config(text= "DEG", command= DEGLambda)
+                function_buttons[15] = "DEG"
+            
+            case "DEG":
+                RADMode = True
+                RADButton.config(text= "RAD", command= RADLambda)
+                function_buttons[15] = "RAD"
+
 
     displayString = ""
     for i in leftStr:
         displayString += i
+    displayString += "|"
     for i in rightStr: # type: ignore
         displayString += i # type: ignore
     

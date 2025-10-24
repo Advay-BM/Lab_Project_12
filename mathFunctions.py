@@ -169,11 +169,11 @@ def csch(x): # type: ignore
 
 # Permutations and combinations
 
-def nPr(n, r): # type: ignore
-    return factorial(n)/(factorial(n-r)) # type: ignore
+def npr(n, r): # type: ignore
+    return int(factorial(n)/(factorial(n-r))) # type: ignore
 
-def nCr(n, r): # type: ignore
-    return factorial(n)/(factorial(r)*factorial(n-r)) # type: ignore
+def ncr(n, r): # type: ignore
+    return int(factorial(n)/(factorial(r)*factorial(n-r))) # type: ignore
 
 # Inverse trig
 def asin(x): # type: ignore
