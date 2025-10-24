@@ -265,7 +265,7 @@ def abs(x): # type: ignore
     return x # type: ignore
 
 def factorial(x): # type: ignore
-    if ((abs(x - n.floor(x)) > epsilon) or (abs(x - n.ceil(x)) > epsilon)) and (x == n.floor(x)):
+    if ((abs(x - n.floor(x)) > epsilon) and (abs(x - n.ceil(x)) > epsilon)):
         raise OverflowError
     x = int(x)
     if (x < 0):
@@ -316,7 +316,6 @@ def ncr(n, r): # type: ignore
     return int(factorial(n)/(factorial(r)*factorial(n-r))) # type: ignore
 
 # if __name__ == "__main__":
-
 #     for i in range(0,11,1):
 #         print(f"{i = }",end="\t")
 #         start_timeN = perf_counter()

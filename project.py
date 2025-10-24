@@ -2,9 +2,6 @@ from tkinter import messagebox
 from mathFunctions import *
 from definitions import *
 
-# To do:
-# RCL, M+, DEL
-
 tab.title("SCIENTIFIC CALCULATOR")
 
 label.grid(row=0,column=0, columnspan=column_count, sticky="we")
@@ -44,16 +41,6 @@ for row in range(row_count):
             
 frame.pack()
 
-"""
-digit value: 0
-. : 1
-+ - x /: 2
-, : 3
-the value of a function is (x+1)*10 + funcCounts[x], where x is the corresponding index of the functions in funcCounts
-This means that the code will break if you include more than 10 of the same function
-"""
-# I have not placed any restrictions when it comes to characters on the right side as the input goes from left to right
-
 def insertParantheses(val): # type: ignore
     global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal
     leftStr.append("(")
@@ -86,7 +73,7 @@ def changeTrigButtonText(prefix = "", suffix = ""):
     cotButton.config(text= f"{prefix}cot{suffix}")
 
 def buttons_pressed(value): # type: ignore
-    global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal, funcCounts, a, RADButton, RADMode, sinButton, cosButton, tanButton, secButton, cotButton, cscButton, HypMode, InvMode
+    global leftChar, leftStr, leftVal, rightChar, rightStr, rightVal, funcCounts, a, RADButton, RADMode, sinButton, cosButton, tanButton, secButton, cotButton, cscButton, HypMode, InvMode, save, saveVal
     if len(label["text"]) >= 25 and value not in non_enforced_buttons:         # Character limit
         return None
 
@@ -101,7 +88,37 @@ def buttons_pressed(value): # type: ignore
                 leftChar = "0"
                 rightChar = None
             case "DEL":
-                ...
+                if leftStr == []:
+                    return None
+
+                if (leftVal[-1] > 9):
+                    val = leftVal[-1]
+                    i = 0
+                    while val in leftVal:
+                        if (leftVal[i] == val):
+                            leftVal.pop(i)
+                            leftStr.pop(i)
+                            i -= 1
+                        i += 1
+                    i = 0
+                    while val in rightVal:
+                        if (rightVal[i] == val):
+                            rightVal.pop(i)
+                            rightStr.pop(i)
+                            i -= 1
+                        i += 1
+                else:
+                    leftStr.pop()
+                    leftVal.pop()
+                if (leftStr == []):
+                    if (rightStr == []):
+                        leftChar = "0"
+                        leftStr = ["0"]
+                        leftVal = [0]
+                    else:
+                        leftChar = None
+                else:
+                    leftChar = leftStr[-1]
             case "EXP":
                 if canPlaceStdFunc():
                     val = initStdFunc(7)
@@ -139,7 +156,7 @@ def buttons_pressed(value): # type: ignore
                     leftChar = "x"
                     leftVal.append(2)
                     leftStr.append("x")
-            case "÷":
+            case "/":
                 # Same restriction as x
                 if leftVal[-1] != 2 and leftVal[-1] != 1 and leftChar != "(":
                     leftChar = "/"
@@ -179,10 +196,17 @@ def buttons_pressed(value): # type: ignore
 
             for i in range(array.count("!")):
                 index = array.index("!")
-                array.pop(index)
-                paranthesesVal = arrayVals[index-1]
-                paranthesesIndex = arrayVals.index(paranthesesVal)
-                array[paranthesesIndex:paranthesesIndex] = list("factorial")
+                facVal = arrayVals[index]
+                array[index] = ")"
+                for i in range(index,-1,-1):
+                    if arrayVals[i] == 2:
+                        array.insert(i+1,"factorial(")
+                        arrayVals.insert(i+1,facVal)
+                        break
+                    if i == 0:
+                        array.insert(0,"factorial(")
+                        arrayVals.insert(0,facVal)
+                        break
 
             for i in range(array.count("P")):
                 index = array.index("P")
@@ -454,11 +478,11 @@ def buttons_pressed(value): # type: ignore
                     insertParantheses(val)
             
             case "!":
-                if canPlaceStdFunc():
-                    val = initStdFunc(8)
-                    rightStr.insert(0, "!") # type: ignore
-                    rightVal.insert(0, val) # type: ignore
-                    insertParantheses(val)
+                if leftVal[-1] == 0 or leftChar == ")":
+                    val = 90 + funcCounts[8]
+                    funcCounts[8] += 1
+                    leftStr.append("!") # type: ignore
+                    leftVal.append(val) # type: ignore
 
             case "abs":
                 if canPlaceStdFunc():
@@ -615,6 +639,7 @@ def buttons_pressed(value): # type: ignore
                 else:
                     RADMode = True
                     RADButton.config(text= "RAD")
+                return None
             
             case "Hyp":
                 HypMode = False if HypMode else True
@@ -622,6 +647,39 @@ def buttons_pressed(value): # type: ignore
             case "Inv":
                 InvMode = False if InvMode else True
             
+            case "SAVE":
+                save = leftStr + rightStr
+                saveVal = leftVal + rightVal
+                return None
+            
+            case "RCL":
+                if (save == []):
+                    messagebox.showerror("ERROR: No save to recall", "Please save something before attempting to recall.")
+                    return None
+                
+                if (len(leftStr) == 1 and leftChar == "0"):
+                    leftStr.pop()
+                    leftVal.pop()
+
+                leftStr += save
+                leftVal += saveVal
+                leftChar = leftStr[-1]
+
+            case ")":
+                # Because of the way DEL works, should NEVER need to be called but just in case...
+                blacklistVals = []
+                found = False
+                for i in range(-1, -len(leftStr)-1, -1):
+                    if (leftStr[i] == ")"):
+                        blacklistVals.append(leftVal[i])
+                    if (leftStr[i] == "(" and leftVal[i] not in blacklistVals and leftVal[i] not in rightVal):
+                        found = True
+                        leftStr.append(")")
+                        leftVal.append(leftVal[i])
+                        leftChar = ")"
+                if not found:
+                    return None
+
     if (InvMode and not(HypMode)):
         changeTrigButtonText(prefix= "a")
     elif (HypMode and not(InvMode)):

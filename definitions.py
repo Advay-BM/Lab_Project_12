@@ -1,19 +1,19 @@
 import tkinter
 
 Value_buttons=[("!","abs","RCL","Hyp","Inv"),
-               ("nPr","←","M+","→","nCr"),
+               ("nPr","←","SAVE","→","nCr"),
                ("Rec()","sin","cos","tan","Pol()"),
                ("RAD","csc","sec","cot","10^x"),
                ("log","√","e","n√","ln"),
                ("(",")","π","^","ENG"),
                ("7","8","9","DEL","AC"),
-               ("4","5","6","x","÷"),
+               ("4","5","6","x","/"),
                ("1","2","3","+","-"),
                ("0",".","=","Ans","EXP")]
 
-right_buttons=  ["AC","÷","x","-","+","DEL","EXP","Ans"]
+right_buttons=  ["AC","/","x","-","+","DEL","EXP","Ans"]
 digit_buttons=     ["0","1","2","3","4","5","6","7","8","9",".","=",]
-function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","M+","→","nCr", "Rec()","sin","cos","tan","Pol()", "RAD","csc","sec","cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
+function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","SAVE","→","nCr", "Rec()","sin","cos","tan","Pol()", "RAD","csc","sec","cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
 non_enforced_buttons= ["AC", "DEL", "←", "→", "="]
 spcl_buttons = ["RAD", "sin", "cos", "tan", "csc", "sec", "cot"]
 
@@ -29,6 +29,18 @@ rightStr = []
 rightVal = []
 leftChar = "0"
 rightChar = None
+save = []
+saveVal = []
+
+"""
+digit value: 0
+. : 1
++ - x /: 2
+, : 3
+the value of a function is (x+1)*10 + funcCounts[x], where x is the corresponding index of the function in funcCounts
+This means that the code will break if you include more than 10 of the same function
+"""
+# I have not placed any restrictions when it comes to characters on the right side as the input goes from left to right
 
 #               0   1    2    3    4    5    6    7   8   9   10   11    12   13   14   15    16    17   18
 # Index order: (), sin, cos, tan, csc, sec, cot, EXP, !, abs, Rec, Pol, 10^x, log, ln, sqrt, nRoot, nPr, nCr
