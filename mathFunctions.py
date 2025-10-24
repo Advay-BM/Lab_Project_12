@@ -6,11 +6,8 @@ pi = 3.141592653589793
 e =  2.718281828459045
 twoPi = 6.283185307179586
 epsilon = 0.0000000001
-# Function definitions
-# Arithmetic
-def power(base, exponent): # type: ignore # type: ignore
-    return base**exponent # type: ignore
 
+# Function definitions
 # Trig
 def sin(x, rad = True): # type: ignore
     if not (rad):
@@ -116,62 +113,7 @@ def csc(x): # type: ignore
         return float('inf')
     return 1/sin(x) # type: ignore
 
-# Other
-def exp(x): # type: ignore
-    return e**x # type: ignore
-
-def abs(x): # type: ignore
-    if x < 0:
-        return -x # type: ignore
-    return x # type: ignore
-
-def factorial(x): # type: ignore
-    if ((abs(x - n.floor(x)) > epsilon) or (abs(x - n.ceil(x)) > epsilon)) and (x == n.floor(x)):
-        raise OverflowError
-    x = int(x)
-    if (x < 0):
-        raise OverflowError
-
-    if (x == 0):
-        return 1
-
-    out = 1
-    for i in range(x,1,-1): # type: ignore
-        out *= i
-    return out
-
-def log(x): # type: ignore
-    if x == 0:
-        return float('-inf')
-    if x < 0:
-        raise OverflowError
-    return n.log10(x) # type: ignore
-
-def ln(x): # type: ignore
-    if x == 0:
-        return float('-inf')
-    if x < 0:
-        raise OverflowError
-    return n.log10(x)/n.log10(e) # type: ignore
-
-def sqrt(x): # type: ignore
-    return x**(0.5) # type: ignore
-
-def Pol(x, y): # type: ignore
-    r = (x**2 + y**2)**(0.5) # type: ignore
-    theta = n.atan2(y,x) # type: ignore
-    return (r, theta) # type: ignore
-
-def Rec(r, theta): # type: ignore # type: ignore
-    x = r*cos(theta) # type: ignore
-    y = r*sin(theta) # type: ignore
-    return (x, y) # type: ignore
-
-def nRoot(n, x): # type: ignore
-    return x**(1/n) # type: ignore
-
 # Hyperbolic trig
-
 def sinh(x, rad = True): # type: ignore
     if not (rad):
         x = x * pi / 180
@@ -201,14 +143,6 @@ def csch(x, rad = True): # type: ignore
     if not (rad):
         x = x * pi / 180
     return 1/sinh(x) # type: ignore
-
-# Permutations and combinations
-
-def npr(n, r): # type: ignore
-    return int(factorial(n)/(factorial(n-r))) # type: ignore
-
-def ncr(n, r): # type: ignore
-    return int(factorial(n)/(factorial(r)*factorial(n-r))) # type: ignore
 
 # Inverse trig
 def asin(x, rad = True): # type: ignore
@@ -320,6 +254,66 @@ def acsch(x, rad = True): # type: ignore
         result = result * 180 / pi
     
     return result # type: ignore
+
+# Other
+def exp(x): # type: ignore
+    return e**x # type: ignore
+
+def abs(x): # type: ignore
+    if x < 0:
+        return -x # type: ignore
+    return x # type: ignore
+
+def factorial(x): # type: ignore
+    if ((abs(x - n.floor(x)) > epsilon) or (abs(x - n.ceil(x)) > epsilon)) and (x == n.floor(x)):
+        raise OverflowError
+    x = int(x)
+    if (x < 0):
+        raise OverflowError
+
+    if (x == 0):
+        return 1
+
+    out = 1
+    for i in range(x,1,-1): # type: ignore
+        out *= i
+    return out
+
+def log(x): # type: ignore
+    if x == 0:
+        return float('-inf')
+    if x < 0:
+        raise OverflowError
+    return n.log10(x) # type: ignore
+
+def ln(x): # type: ignore
+    if x == 0:
+        return float('-inf')
+    if x < 0:
+        raise OverflowError
+    return n.log10(x)/n.log10(e) # type: ignore
+
+def sqrt(x): # type: ignore
+    return x**(0.5) # type: ignore
+
+def Pol(x, y): # type: ignore
+    r = (x**2 + y**2)**(0.5) # type: ignore
+    theta = n.atan2(y,x) # type: ignore
+    return (r, theta) # type: ignore
+
+def Rec(r, theta): # type: ignore # type: ignore
+    x = r*cos(theta) # type: ignore
+    y = r*sin(theta) # type: ignore
+    return (x, y) # type: ignore
+
+def nRoot(n, x): # type: ignore
+    return x**(1/n) # type: ignore
+
+def npr(n, r): # type: ignore
+    return int(factorial(n)/(factorial(n-r))) # type: ignore
+
+def ncr(n, r): # type: ignore
+    return int(factorial(n)/(factorial(r)*factorial(n-r))) # type: ignore
 
 # if __name__ == "__main__":
 
