@@ -347,13 +347,19 @@ def sqrt(x):                                                                # ty
     return x**(0.5)                                                         # type: ignore
 
 # Converts Cartesion coordinates to polar coordinates
-def Pol(x, y):                                                              # type: ignore
+def Pol(x, y, rad = True):                                                  # type: ignore
     r = (x**2 + y**2)**(0.5)                                                # type: ignore
     theta = n.atan2(y,x)                                                    # type: ignore
+    
+    if not rad:
+        theta = theta*180 / pi
     return (r, theta)                                                       # type: ignore
 
 # Converts polar coordinates to Cartesion coordinates
-def Rec(r, theta):                                                          # type: ignore          # type: ignore
+def Rec(r, theta, rad = True):                                              # type: ignore          # type: ignore
+    if not rad:
+        theta = theta*pi / 180
+    
     x = r*cos(theta)                                                        # type: ignore
     y = r*sin(theta)                                                        # type: ignore
     return (x, y)                                                           # type: ignore

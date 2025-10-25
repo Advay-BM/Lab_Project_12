@@ -446,13 +446,19 @@ def sqrt(x):                                                                # ty
     return x**(0.5)                                                         # type: ignore
 
 # Converts Cartesion coordinates to polar coordinates
-def Pol(x, y):                                                              # type: ignore
+def Pol(x, y, rad = True):                                                  # type: ignore
     r = (x**2 + y**2)**(0.5)                                                # type: ignore
     theta = n.atan2(y,x)                                                    # type: ignore
+    
+    if not rad:
+        theta = theta*180 / pi
     return (r, theta)                                                       # type: ignore
 
 # Converts polar coordinates to Cartesion coordinates
-def Rec(r, theta):                                                          # type: ignore          # type: ignore
+def Rec(r, theta, rad = True):                                              # type: ignore          # type: ignore
+    if not rad:
+        theta = theta*pi / 180
+    
     x = r*cos(theta)                                                        # type: ignore
     y = r*sin(theta)                                                        # type: ignore
     return (x, y)                                                           # type: ignore
@@ -786,6 +792,16 @@ def buttons_pressed(value):                                                 # ty
                         index = arrayVals.index(70+i)
                         array.insert(index + 1, ", rad = False")
                         arrayVals.insert(index + 1, 70 + i)
+                    
+                    if (arrayVals.count(110+i)) > 0:
+                        index = arrayVals.index(110+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 110 + i)
+
+                    if (arrayVals.count(120+i)) > 0:
+                        index = arrayVals.index(120+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 120 + i)
                 # Return evrything to normal
                 array = array[::-1]
                 arrayVals = arrayVals[::-1]
@@ -823,9 +839,6 @@ def buttons_pressed(value):                                                 # ty
                 messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}") # type: ignore
             
             else:
-                # Prevent -0.0
-                if f"{result:.6f}" == "-0.000000":
-                    result = 0
 
                 if type(result) == tuple:
                     # Used when a coordinate conversion was performed
@@ -834,6 +847,9 @@ def buttons_pressed(value):                                                 # ty
 
                 elif type(result) == float:
                     # Truncate the result to 6 decimal places
+                    # Prevent -0.0
+                    if f"{result:.6f}" == "-0.000000":
+                        result = 0
                     Ans = result
                     label["text"] = f"{result:.6f}".rstrip("0")
                     if label["text"][-1] == ".":

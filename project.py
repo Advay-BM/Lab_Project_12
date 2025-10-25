@@ -308,6 +308,16 @@ def buttons_pressed(value):                                                 # ty
                         index = arrayVals.index(70+i)
                         array.insert(index + 1, ", rad = False")
                         arrayVals.insert(index + 1, 70 + i)
+                    
+                    if (arrayVals.count(110+i)) > 0:
+                        index = arrayVals.index(110+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 110 + i)
+
+                    if (arrayVals.count(120+i)) > 0:
+                        index = arrayVals.index(120+i)
+                        array.insert(index + 1, ", rad = False")
+                        arrayVals.insert(index + 1, 120 + i)
                 # Return evrything to normal
                 array = array[::-1]
                 arrayVals = arrayVals[::-1]
@@ -345,9 +355,6 @@ def buttons_pressed(value):                                                 # ty
                 messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}") # type: ignore
             
             else:
-                # Prevent -0.0
-                if f"{result:.6f}" == "-0.000000":
-                    result = 0
 
                 if type(result) == tuple:
                     # Used when a coordinate conversion was performed
@@ -356,6 +363,9 @@ def buttons_pressed(value):                                                 # ty
 
                 elif type(result) == float:
                     # Truncate the result to 6 decimal places
+                    # Prevent -0.0
+                    if f"{result:.6f}" == "-0.000000":
+                        result = 0
                     Ans = result
                     label["text"] = f"{result:.6f}".rstrip("0")
                     if label["text"][-1] == ".":
