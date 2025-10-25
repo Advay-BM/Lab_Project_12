@@ -1140,7 +1140,8 @@ def buttons_pressed(value):                                                 # ty
             
             case "ENG":
                 # Convert answer to standard form
-
+                if (len(leftStr) == 1 and leftChar == "0"):
+                    return None
                 # Merge left and right
                 array = leftStr + rightStr
                 arrayVals = leftVal+rightVal
