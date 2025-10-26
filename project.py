@@ -543,10 +543,10 @@ def buttons_pressed(value):                                                 # ty
                     leftStr.append("!")                                     # type: ignore
                     leftVal.append(val)                                     # type: ignore
 
-            case "abs":
+            case "mod":
                 if canPlaceStdFunc():
                     val = initStdFunc(9)
-                    leftStr += list("abs")
+                    leftStr += list("mod")
                     leftVal.extend([val for i in range(3)])                 # type: ignore
                     insertParantheses(val)
             
@@ -672,10 +672,10 @@ def buttons_pressed(value):                                                 # ty
                 
                 inp = float("".join(array))
                 magnitude = 0
-                while abs(inp) < 1:
+                while mod(inp) < 1:
                     inp *= 10
                     magnitude -= 1
-                while abs(inp) >= 10:
+                while mod(inp) >= 10:
                     inp /= 10
                     magnitude += 1
 

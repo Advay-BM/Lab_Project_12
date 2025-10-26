@@ -1,7 +1,7 @@
 import tkinter
 
 # Arrangement of buttons
-Value_buttons=[("!","abs","RCL","Hyp","Inv"),
+Value_buttons=[("!","mod","RCL","Hyp","Inv"),
                ("nPr","←","SAVE","→","nCr"),
                ("Rec()","sin","cos","tan","Pol()"),
                ("RAD","csc","sec","cot","10^x"),
@@ -12,13 +12,13 @@ Value_buttons=[("!","abs","RCL","Hyp","Inv"),
                ("1","2","3","+","-"),
                ("0",".","=","Ans","EXP")]
 
-# Basic buttons present even in normal calculators except maybe EXP, I don't know why that is there instead of ^, but my teammates insisted that this placement was correct
+# Basic buttons present even in normal calculators
 right_buttons=  ["AC","/","x","-","+","DEL","EXP","Ans"]
 
 # . and = included for symmetry
 digit_buttons=     ["0","1","2","3","4","5","6","7","8","9",".","=",]
 
-function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","SAVE","→","nCr", "Rec()","sin","cos","tan","Pol()", "RAD","csc","sec","cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
+function_buttons=  ["!","mod","RCL","Hyp","Inv", "nPr","←","SAVE","→","nCr", "Rec()","sin","cos","tan","Pol()", "RAD","csc","sec","cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
 
 # Buttons that work even if the character limit is exceeded
 non_enforced_buttons= ["AC", "DEL", "←", "→", "="]
@@ -64,7 +64,7 @@ I have not placed any restrictions when it comes to characters on the right side
 # Counts of certain functions
 # Used to distinguish functions when multiple are used in a single expression
 #               0   1    2    3    4    5    6    7   8   9   10   11    12   13   14   15    16    17   18
-# Index order: (), sin, cos, tan, csc, sec, cot, EXP, !, abs, Rec, Pol, 10^x, log, ln, sqrt, nRoot, nPr, nCr
+# Index order: (), sin, cos, tan, csc, sec, cot, EXP, !, mod, Rec, Pol, 10^x, log, ln, sqrt, nRoot, nPr, nCr
 funcCounts = [0 for i in range(19)]                                         # type: ignore # type: ignore
 
 # Used to store the answer when Ans is clicked

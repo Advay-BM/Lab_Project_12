@@ -295,7 +295,7 @@ def acsch(x, rad = True):                                                   # ty
 def exp(x):                                                                 # type: ignore
     return e**x                                                             # type: ignore
 
-def abs(x):                                                                 # type: ignore
+def mod(x):                                                                 # type: ignore
     if x < 0:
         return -x                                                           # type: ignore
     return x                                                                # type: ignore

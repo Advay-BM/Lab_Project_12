@@ -1,9 +1,10 @@
 import tkinter
-from tkinter import messagebox
 import numpy as n
+from tkinter import messagebox
+
 
 # Arrangement of buttons
-Value_buttons=[("!","abs","RCL","Hyp","Inv"),
+Value_buttons=[("!","mod","RCL","Hyp","Inv"),
                ("nPr","←","SAVE","→","nCr"),
                ("Rec()","sin","cos","tan","Pol()"),
                ("RAD","csc","sec","cot","10^x"),
@@ -14,13 +15,13 @@ Value_buttons=[("!","abs","RCL","Hyp","Inv"),
                ("1","2","3","+","-"),
                ("0",".","=","Ans","EXP")]
 
-# Basic buttons present even in normal calculators except maybe EXP, I don't know why that is there instead of ^, but my teammates insisted that this placement was correct
+# Basic buttons present even in normal calculators
 right_buttons=  ["AC","/","x","-","+","DEL","EXP","Ans"]
 
 # . and = included for symmetry
 digit_buttons=     ["0","1","2","3","4","5","6","7","8","9",".","=",]
 
-function_buttons=  ["!","abs","RCL","Hyp","Inv", "nPr","←","SAVE","→","nCr", "Rec()","sin","cos","tan","Pol()", "RAD","csc","sec","cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
+function_buttons=  ["!","mod","RCL","Hyp","Inv", "nPr","←","SAVE","→","nCr", "Rec()","sin","cos","tan","Pol()", "RAD","csc","sec","cot","10^x", "log","√","e","n√","ln", "(",")","π","^","ENG",]
 
 # Buttons that work even if the character limit is exceeded
 non_enforced_buttons= ["AC", "DEL", "←", "→", "="]
@@ -66,7 +67,7 @@ I have not placed any restrictions when it comes to characters on the right side
 # Counts of certain functions
 # Used to distinguish functions when multiple are used in a single expression
 #               0   1    2    3    4    5    6    7   8   9   10   11    12   13   14   15    16    17   18
-# Index order: (), sin, cos, tan, csc, sec, cot, EXP, !, abs, Rec, Pol, 10^x, log, ln, sqrt, nRoot, nPr, nCr
+# Index order: (), sin, cos, tan, csc, sec, cot, EXP, !, mod, Rec, Pol, 10^x, log, ln, sqrt, nRoot, nPr, nCr
 funcCounts = [0 for i in range(19)]                                         # type: ignore # type: ignore
 
 # Used to store the answer when Ans is clicked
@@ -394,7 +395,7 @@ def acsch(x, rad = True):                                                   # ty
 def exp(x):                                                                 # type: ignore
     return e**x                                                             # type: ignore
 
-def abs(x):                                                                 # type: ignore
+def mod(x):                                                                 # type: ignore
     if x < 0:
         return -x                                                           # type: ignore
     return x                                                                # type: ignore
@@ -473,7 +474,7 @@ def ncr(n, r):                                                              # ty
     return int(factorial(n)/(factorial(r)*factorial(n-r)))                  # type: ignore
 
 # Old code for testing efficiency of approximated functions:
-# if __name__ == "__main__":Th
+# if __name__ == "__main__":
 #     for i in range(0,11,1):
 #         print(f"{i = }",end="\t")
 #         start_timeN = perf_counter()
@@ -485,7 +486,6 @@ def ncr(n, r):                                                              # ty
 #         print(f"Code exuction time(Numpy): {(end_timeN - start_timeN)*1000:.4f}ms")
 #         print(f"Code exuction time(Custom): {(end_timeC - start_timeC)*1000:.4f}ms\n")
 
- 
 tab.title("SCIENTIFIC CALCULATOR")
 
 label.grid(row= 0,column= 0, columnspan= column_count, sticky= "we")
@@ -1027,10 +1027,10 @@ def buttons_pressed(value):                                                 # ty
                     leftStr.append("!")                                     # type: ignore
                     leftVal.append(val)                                     # type: ignore
 
-            case "abs":
+            case "mod":
                 if canPlaceStdFunc():
                     val = initStdFunc(9)
-                    leftStr += list("abs")
+                    leftStr += list("mod")
                     leftVal.extend([val for i in range(3)])                 # type: ignore
                     insertParantheses(val)
             
@@ -1156,10 +1156,10 @@ def buttons_pressed(value):                                                 # ty
                 
                 inp = float("".join(array))
                 magnitude = 0
-                while abs(inp) < 1:
+                while mod(inp) < 1:
                     inp *= 10
                     magnitude -= 1
-                while abs(inp) >= 10:
+                while mod(inp) >= 10:
                     inp /= 10
                     magnitude += 1
 
@@ -1222,7 +1222,6 @@ def buttons_pressed(value):                                                 # ty
                 leftChar = leftStr[-1]
 
             case ")":
-                # Because of the way DEL works, should NEVER need to be called but just in case...
                 blacklistVals = []
                 found = False
 
