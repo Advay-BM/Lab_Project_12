@@ -80,7 +80,7 @@ tab=tkinter.Tk()
 frame= tkinter.Frame(tab)
 
 # | is used to indicate the cursor position
-label= tkinter.Label(frame, text= "0|", font= ("arial",20), background= "black", foreground= "white", anchor= "e", width= column_count,height= 2)
+label= tkinter.Label(frame, text= "0|", font= ("arial",23), background= "black", foreground= "white", anchor= "e", width= column_count,height= 2)
 
 # Abstraction/Macro
 def createSpclButton(value):

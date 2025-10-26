@@ -87,8 +87,11 @@ def changeTrigButtonText(prefix= "", suffix= ""):
 def buttons_pressed(value):                                                 # type: ignore
     global leftChar, leftStr, leftVal, rightStr, rightVal, funcCounts, Ans, RADButton, RADMode, sinButton, cosButton, tanButton, secButton, cotButton, cscButton, HypMode, InvMode, save, saveVal
     
-    if len(label["text"]) >= 25 and value not in non_enforced_buttons:         # Character limit
+    if len(label["text"]) >= 30 and value not in non_enforced_buttons:         # Character limit
         return None
+
+    if (len(label["text"]) > 10):
+        label.config(font= ["arial", int(23 - 0.2*len(label["text"]))])
 
     if (value in right_buttons):
         match (value):                                                      # type: ignore
