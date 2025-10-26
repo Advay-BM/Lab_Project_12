@@ -107,7 +107,7 @@ def buttons_pressed(value):                                                 # ty
 
                 # Delete the entire function if we are deleting a function
                 # Delete a single character otherwise
-                if (leftVal[-1] > 9):
+                if (leftVal[-1] > 9 and leftChar != ")"):
                     val = leftVal[-1]
 
                     i = 0
@@ -735,7 +735,6 @@ def buttons_pressed(value):                                                 # ty
                 leftChar = leftStr[-1]
 
             case ")":
-                # Because of the way DEL works, should NEVER need to be called but just in case...
                 blacklistVals = []
                 found = False
 
@@ -748,6 +747,7 @@ def buttons_pressed(value):                                                 # ty
                         leftStr.append(")")
                         leftVal.append(leftVal[i])
                         leftChar = ")"
+                        break
                 if not found:
                     return None
 
