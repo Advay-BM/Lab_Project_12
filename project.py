@@ -35,7 +35,7 @@ for row in range(row_count):
         if value not in spcl_buttons:
 
             buttons=tkinter.Button(frame, text=value, font=("arial",20), width= column_count-1, height= 1, command= lambda value= value: buttons_pressed(value))
-            
+
             if value in right_buttons:
                 buttons.config(foreground="black", background=light_blue)
             elif value in digit_buttons:
@@ -46,22 +46,22 @@ for row in range(row_count):
                 buttons.config(foreground="black", background=light_grey)
 
             buttons.grid(row=row+1, column=column)
-            
+
 frame.pack()
 
 # Abstraction/Macro
-def insertParantheses(val):                                                 # type: ignore
+def insertParantheses(val):
     global leftChar, leftStr, leftVal, rightStr, rightVal
     leftStr.append("(")
-    leftVal.append(val)                                                     # type: ignore
+    leftVal.append(val)
     leftChar = "("
-    rightStr.insert(0,")")                                                  # type: ignore
-    rightVal.insert(0,val)                                                  # type: ignore
+    rightStr.insert(0,")")
+    rightVal.insert(0,val)
 
 # Abstraction/Macro
 def canPlaceStdFunc():
     global leftVal, leftStr, leftChar
-    return (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0")
+    return (len(leftVal) == 0) or (leftVal[-1] != 0 and leftVal[-1] != 1) or (len(leftStr) == 1 and leftChar == "0")
 
 # Abstraction/Macro
 def initStdFunc(ind):
@@ -84,17 +84,15 @@ def changeTrigButtonText(prefix= "", suffix= ""):
     cotButton.config(text= f"{prefix}cot{suffix}")
 
 # The place where stuff actually happens
-def buttons_pressed(value):                                                 # type: ignore
+print(label["font"])
+def buttons_pressed(value):
     global leftChar, leftStr, leftVal, rightStr, rightVal, funcCounts, Ans, RADButton, RADMode, sinButton, cosButton, tanButton, secButton, cotButton, cscButton, HypMode, InvMode, save, saveVal
-    
-    if len(label["text"]) >= 30 and value not in non_enforced_buttons:         # Character limit
+
+    if len(label["text"]) >= 50 and value not in non_enforced_buttons:         # Character limit
         return None
 
-    if (len(label["text"]) > 10):
-        label.config(font= ["arial", int(23 - 0.2*len(label["text"]))])
-
     if (value in right_buttons):
-        match (value):                                                      # type: ignore
+        match (value):
             case "AC":
                 # Reset everything
                 leftStr = ["0"]
@@ -131,7 +129,7 @@ def buttons_pressed(value):                                                 # ty
                 else:
                     leftStr.pop()
                     leftVal.pop()
-                
+
                 if (leftStr == []):
                     # We cannot have an empty display
                     if (rightStr == []):
@@ -147,14 +145,14 @@ def buttons_pressed(value):                                                 # ty
                 if canPlaceStdFunc():
                     val = initStdFunc(7)
                     leftStr += list("exp")
-                    leftVal.extend([val for i in range(3)]) # type: ignore
+                    leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
 
             case "Ans":
                 if Ans == None:
                     messagebox.showerror("ERROR: Cannot input answer", "Either an answer was not evaluated or the previous answer was invalid.\nPlease evaluate an expression using '=' before using 'Ans'")
                     return None
-                
+
                 if len(leftStr) == 1 and leftChar == "0":
                     leftStr[-1] = "Ans"
                 else:
@@ -165,14 +163,14 @@ def buttons_pressed(value):                                                 # ty
 
             case "+":
                 # Should only be allowed if character to the left is not a decimal or another operator
-                if leftVal[-1] != 2 and leftVal[-1] != 1:
+                if (len(leftVal) == 0) or (leftVal[-1] != 2 and leftVal[-1] != 1):
                     leftChar = "+"
                     leftVal.append(2)
                     leftStr.append("+")
 
             case "-":
                 # Same restriction as +
-                if leftVal[-1] != 2 and leftVal[-1] != 1:
+                if (len(leftVal) == 0) or (leftVal[-1] != 2 and leftVal[-1] != 1):
                     if len(leftStr) == 1 and leftChar == "0":
                         leftStr.pop()
                         leftVal.pop()
@@ -181,27 +179,33 @@ def buttons_pressed(value):                                                 # ty
                     leftVal.append(2)
 
             case "x":
+                if (len(leftVal) == 0):
+                    return None
+
                 # Same restriction as + but additionally, x cannot prefix a number
-                if leftVal[-1] != 2 and leftVal[-1] != 1 and leftChar != "(":
+                if (leftVal[-1] != 2 and leftVal[-1] != 1 and leftChar != "("):
                     leftChar = "x"
                     leftVal.append(2)
                     leftStr.append("x")
 
             case "/":
+                if (len(leftVal) == 0):
+                    return None
+
                 # Same restriction as x
-                if leftVal[-1] != 2 and leftVal[-1] != 1 and leftChar != "(":
+                if (leftVal[-1] != 2 and leftVal[-1] != 1 and leftChar != "("):
                     leftChar = "/"
                     leftVal.append(2)
                     leftStr.append("/")
-    
+
     elif (value in digit_buttons):
         if value in "0123456789":
             if len(leftStr) == 1 and leftChar == "0":
                 leftStr[-1] = value
             else:
-                leftStr.append(value)                                       # type: ignore
+                leftStr.append(value)
                 leftVal.append(0)
-            leftChar = value                                                # type: ignore
+            leftChar = value
 
         elif value == ".":
             # Go backwards through leftStr
@@ -209,10 +213,13 @@ def buttons_pressed(value):                                                 # ty
                 if leftVal[i] == 1 or leftVal[i] == 3:
                     # If we encounter another decimal point or a comma, do not allow to place
                     return None
-                
+
                 if leftVal[i] != 0:
                     # Stop checking if we reach the end of the number
                     break
+
+            if len(leftVal) == 0:
+                return None
 
             if leftVal[-1] == 0:
                 leftChar = "."
@@ -311,7 +318,7 @@ def buttons_pressed(value):                                                 # ty
                         index = arrayVals.index(70+i)
                         array.insert(index + 1, ", rad = False")
                         arrayVals.insert(index + 1, 70 + i)
-                    
+
                     if (arrayVals.count(110+i)) > 0:
                         index = arrayVals.index(110+i)
                         array.insert(index + 1, ", rad = False")
@@ -349,14 +356,14 @@ def buttons_pressed(value):                                                 # ty
 
             # Handle errors
             except SyntaxError as err:
-                messagebox.showerror("ERROR: Cannot compute", f"The calculator was unable to compute the given expression.\nPlease change it and try again.\nError Message: {err}") # type: ignore
+                messagebox.showerror("ERROR: Cannot compute", f"The calculator was unable to compute the given expression.\nPlease change it and try again.\nError Message: {err}")
             except ZeroDivisionError as err:
                 messagebox.showerror("ERROR: Division by zero",f"Calculation could not be completed as there was an instance of division by zero.\nError Message: {err}")
             except OverflowError as err:
                 messagebox.showerror("Error: Invalid input",f"The input to a function was not valid, i.e, it is outside the function's domain.")
             except Exception as err:
-                messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}") # type: ignore
-            
+                messagebox.showerror("ERROR", f"Something went wrong...\nError Message: {err}")
+
             else:
 
                 if type(result) == tuple:
@@ -381,38 +388,38 @@ def buttons_pressed(value):                                                 # ty
                 if label["text"] == "inf" or label["text"] == "-inf":
                     Ans = None
                     messagebox.showwarning("WARNING: Infinity", "The calculation resulted in infinity\nPlease do not save the result or attempt further calculation to avoid errors\nPress the AC button to continue using the calculator")
-                
+
                 # Reset these to hold result
                 leftStr = []
                 leftVal = []
                 rightStr = []
                 rightVal = []
-                funcCounts = [0 for i in range(19)]                         # type: ignore
+                funcCounts = [0 for i in range(19)]
                 for i in str(result):
-                    leftStr.append(i)                                       # type: ignore
+                    leftStr.append(i)
                     match (i):
                         case "-":
-                            leftVal.append(2)                               # type: ignore
+                            leftVal.append(2)
                         case ".":
-                            leftVal.append(1)                               # type: ignore
+                            leftVal.append(1)
                         case ",":
                             leftVal.append(3)
                         case _:
-                            leftVal.append(0)                               # type: ignore
-                leftChar = leftStr[-1]                                      # type: ignore
+                            leftVal.append(0)
+                leftChar = leftStr[-1]
                 label["text"] += "|"
                 return None
-            
+
     elif (value in function_buttons):
-        match (value):                                                      # type: ignore
+        match (value):
             case "←":
                 # Only perform the action if we are not at the leftmost end
                 if (leftStr != []):
                     # Move the last character in the left to the right
                     storeStr = leftStr.pop()
                     storeVal = leftVal.pop()
-                    rightStr.insert(0, storeStr)                            # type: ignore
-                    rightVal.insert(0, storeVal)                            # type: ignore
+                    rightStr.insert(0, storeStr)
+                    rightVal.insert(0, storeVal)
                     if (leftStr == []):
                         leftChar = None
                     else:
@@ -422,12 +429,12 @@ def buttons_pressed(value):                                                 # ty
                 # Only perform the action if we are not at the rightmost end
                 if (rightStr != []):
                     # Move the last character in the right to the left
-                    storeStr = rightStr.pop(0)                              # type: ignore
-                    storeVal = rightVal.pop(0)                              # type: ignore
-                    leftStr.append(storeStr)                                # type: ignore
-                    leftVal.append(storeVal)                                # type: ignore
+                    storeStr = rightStr.pop(0)
+                    storeVal = rightVal.pop(0)
+                    leftStr.append(storeStr)
+                    leftVal.append(storeVal)
                     leftChar = leftStr[-1]
-            
+
             case "(":
                 if canPlaceStdFunc():
                     val = initStdFunc(0)
@@ -438,16 +445,16 @@ def buttons_pressed(value):                                                 # ty
                     val = initStdFunc(1)
                     if (InvMode and not(HypMode)):
                         leftStr += list("asin")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and not(InvMode)):
                         leftStr += list("sinh")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and InvMode):
                         leftStr += list("asinh")
-                        leftVal.extend([val for i in range(5)])             # type: ignore
+                        leftVal.extend([val for i in range(5)])
                     else:
                         leftStr += list("sin")
-                        leftVal.extend([val for i in range(3)])             # type: ignore
+                        leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
 
             case "cos":
@@ -455,129 +462,135 @@ def buttons_pressed(value):                                                 # ty
                     val = initStdFunc(2)
                     if (InvMode and not(HypMode)):
                         leftStr += list("acos")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and not(InvMode)):
                         leftStr += list("cosh")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and InvMode):
                         leftStr += list("acosh")
-                        leftVal.extend([val for i in range(5)])             # type: ignore
+                        leftVal.extend([val for i in range(5)])
                     else:
                         leftStr += list("cos")
-                        leftVal.extend([val for i in range(3)])             # type: ignore
+                        leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-                    
+
 
             case "tan":
                 if canPlaceStdFunc():
                     val = initStdFunc(3)
                     if (InvMode and not(HypMode)):
                         leftStr += list("atan")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and not(InvMode)):
                         leftStr += list("tanh")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and InvMode):
                         leftStr += list("atanh")
-                        leftVal.extend([val for i in range(5)])             # type: ignore
+                        leftVal.extend([val for i in range(5)])
                     else:
                         leftStr += list("tan")
-                        leftVal.extend([val for i in range(3)])             # type: ignore
+                        leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-            
+
             case "csc":
                 if canPlaceStdFunc():
                     val = initStdFunc(4)
                     if (InvMode and not(HypMode)):
                         leftStr += list("acsc")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and not(InvMode)):
                         leftStr += list("csch")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and InvMode):
                         leftStr += list("acsch")
-                        leftVal.extend([val for i in range(5)])             # type: ignore
+                        leftVal.extend([val for i in range(5)])
                     else:
                         leftStr += list("csc")
-                        leftVal.extend([val for i in range(3)])             # type: ignore
+                        leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-            
+
             case "sec":
                 if canPlaceStdFunc():
                     val = initStdFunc(5)
                     if (InvMode and not(HypMode)):
                         leftStr += list("asec")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and not(InvMode)):
                         leftStr += list("sech")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and InvMode):
                         leftStr += list("asech")
-                        leftVal.extend([val for i in range(5)])             # type: ignore
+                        leftVal.extend([val for i in range(5)])
                     else:
                         leftStr += list("sec")
-                        leftVal.extend([val for i in range(3)])             # type: ignore
+                        leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-            
+
             case "cot":
                 if canPlaceStdFunc():
                     val = initStdFunc(6)
                     if (InvMode and not(HypMode)):
                         leftStr += list("acot")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and not(InvMode)):
                         leftStr += list("coth")
-                        leftVal.extend([val for i in range(4)])             # type: ignore
+                        leftVal.extend([val for i in range(4)])
                     elif (HypMode and InvMode):
                         leftStr += list("acoth")
-                        leftVal.extend([val for i in range(5)])             # type: ignore
+                        leftVal.extend([val for i in range(5)])
                     else:
                         leftStr += list("cot")
-                        leftVal.extend([val for i in range(3)])             # type: ignore
+                        leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-            
+
             case "!":
-                if leftVal[-1] == 0 or leftChar == ")":
+                if (len(leftVal) == 0):
+                    return None
+
+                if (leftVal[-1] == 0 or leftChar == ")"):
                     val = 90 + funcCounts[8]
                     funcCounts[8] += 1
-                    leftStr.append("!")                                     # type: ignore
-                    leftVal.append(val)                                     # type: ignore
+                    leftStr.append("!")
+                    leftVal.append(val)
 
             case "mod":
                 if canPlaceStdFunc():
                     val = initStdFunc(9)
                     leftStr += list("mod")
-                    leftVal.extend([val for i in range(3)])                 # type: ignore
+                    leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-            
+
             case "Rec()":
                 # Only allow conversion when display is clear
                 if (len(leftStr) == 1 and leftChar == "0"):
                     val = initStdFunc(10)
                     leftStr += list("Rec")
-                    leftVal.extend([val for i in range(3)])                 # type: ignore
+                    leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-                    rightStr.insert(0, ",")                                 # type: ignore
-                    rightVal.insert(0,3)                                    # type: ignore
+                    rightStr.insert(0, ",")
+                    rightVal.insert(0,3)
 
             case "Pol()":
                 # Only allow conversion when display is clear
                 if (len(leftStr) == 1 and leftChar == "0"):
                     val = initStdFunc(11)
                     leftStr += list("Pol")
-                    leftVal.extend([val for i in range(3)])                 # type: ignore
+                    leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-                    rightStr.insert(0, ",")                                 # type: ignore
-                    rightVal.insert(0,3)                                    # type: ignore
+                    rightStr.insert(0, ",")
+                    rightVal.insert(0,3)
 
             case "10^x":
                  if canPlaceStdFunc():
                     val = initStdFunc(12)
                     leftStr += list("10^")
-                    leftVal.extend([val for i in range(3)])                 # type: ignore
+                    leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-            
+
             case "^":
+                if (len(leftVal) == 0):
+                    return None
+
                 if leftVal[-1] != 2 and leftVal[-1] != 1 and leftChar != "(":
                     leftChar = "^"
                     leftVal.append(2)
@@ -588,75 +601,75 @@ def buttons_pressed(value):                                                 # ty
                     leftStr[-1] = value
                     leftChar = value
                 else:
-                    if leftVal[-1] != 0:
+                    if len(leftVal) == 0 or leftVal[-1] != 0:
                         leftStr.append(value)
                         leftVal.append(0)
                         leftChar = value
-            
+
             case "π":
                 if len(leftStr) == 1 and leftChar == "0":
                     leftStr[-1] = value
                     leftChar = value
                 else:
-                    if leftVal[-1] != 0:
+                    if len(leftVal) == 0 or leftVal[-1] != 0:
                         leftStr.append(value)
                         leftVal.append(0)
                         leftChar = value
-            
+
             case "log":
                 if canPlaceStdFunc():
                     val = initStdFunc(13)
                     leftStr += list("log")
-                    leftVal.extend([val for i in range(3)])                 # type: ignore
+                    leftVal.extend([val for i in range(3)])
                     insertParantheses(val)
-            
+
             case "ln":
                 if canPlaceStdFunc():
                     val = initStdFunc(14)
                     leftStr += list("ln")
-                    leftVal.extend([val for i in range(2)])                 # type: ignore
+                    leftVal.extend([val for i in range(2)])
                     insertParantheses(val)
-            
+
             case "√":
                 if canPlaceStdFunc():
                     val = initStdFunc(15)
                     leftStr.append("√")
-                    leftVal.append(val)                                     # type: ignore
+                    leftVal.append(val)
                     insertParantheses(val)
 
             case "n√":
                 if canPlaceStdFunc():
                     val = initStdFunc(16)
                     leftStr += list("nRoot")
-                    leftVal.extend([val for i in range(5)])                 # type: ignore
+                    leftVal.extend([val for i in range(5)])
                     insertParantheses(val)
                     # first argument is n, second is the actual value
-                    rightStr.insert(0, ",")                                 # type: ignore
-                    rightVal.insert(0,3)                                    # type: ignore
-            
+                    rightStr.insert(0, ",")
+                    rightVal.insert(0,3)
+
             case "nPr":
                 if canPlaceStdFunc():
                     val = initStdFunc(17)
                     print(val)
                     insertParantheses(val)
                     rightStr.insert(1,"P")
-                    rightVal.insert(1, val)                                 # type: ignore
+                    rightVal.insert(1, val)
                     rightStr.insert(2,"(")
-                    rightVal.insert(2, val)                                 # type: ignore
+                    rightVal.insert(2, val)
                     rightStr.insert(3,")")
-                    rightVal.insert(3, val)                                 # type: ignore
-            
+                    rightVal.insert(3, val)
+
             case "nCr":
                 if canPlaceStdFunc():
                     val = initStdFunc(18)
                     insertParantheses(val)
                     rightStr.insert(1,"C")
-                    rightVal.insert(1, val)                                 # type: ignore
+                    rightVal.insert(1, val)
                     rightStr.insert(2,"(")
-                    rightVal.insert(2, val)                                 # type: ignore
+                    rightVal.insert(2, val)
                     rightStr.insert(3,")")
-                    rightVal.insert(3, val)                                 # type: ignore
-            
+                    rightVal.insert(3, val)
+
             case "ENG":
                 # Convert answer to standard form
                 if (len(leftStr) == 1 and leftChar == "0"):
@@ -669,13 +682,13 @@ def buttons_pressed(value):                                                 # ty
                 for i in range(len(array)):
                     if arrayVals[i] != 0 and arrayVals[i] != 1 and arrayVals[i] != 2:
                         return None
-                
+
                 inp = float("".join(array))
                 magnitude = 0
-                while mod(inp) < 1:
+                while abs(inp) < 1:
                     inp *= 10
                     magnitude -= 1
-                while mod(inp) >= 10:
+                while abs(inp) >= 10:
                     inp /= 10
                     magnitude += 1
 
@@ -686,24 +699,27 @@ def buttons_pressed(value):                                                 # ty
                 leftVal = []
                 rightStr = []
                 rightVal = []
-                funcCounts = [0 for i in range(19)]                         # type: ignore
+                funcCounts = [0 for i in range(19)]
 
                 for i in label["text"]:
-                    leftStr.append(i)                                       # type: ignore
+                    leftStr.append(i)
                     match (i):
                         case "-" | "x" | "^":
-                            leftVal.append(2)                               # type: ignore
+                            leftVal.append(2)
                         case ".":
-                            leftVal.append(1)                               # type: ignore
+                            leftVal.append(1)
                         case "(" | ")":
                             leftVal.append(10)
                             funcCounts[0] += 1
                         case _:
-                            leftVal.append(0)                               # type: ignore
-                leftChar = leftStr[-1]                                      # type: ignore
+                            leftVal.append(0)
+                leftChar = leftStr[-1]
                 label["text"] += "|"
+
+                if (len(label["text"]) > 10):
+                    label.config(font= ["arial", int(23 - 0.4*len(label["text"]))])
                 return None
-            
+
             case "RAD":
                 if (RADMode):
                     RADMode = False
@@ -712,23 +728,23 @@ def buttons_pressed(value):                                                 # ty
                     RADMode = True
                     RADButton.config(text= "RAD")
                 return None
-            
+
             case "Hyp":
                 HypMode = False if HypMode else True
-                
+
             case "Inv":
                 InvMode = False if InvMode else True
-            
+
             case "SAVE":
                 save = leftStr + rightStr
                 saveVal = leftVal + rightVal
                 return None
-            
+
             case "RCL":
                 if (save == []):
                     messagebox.showerror("ERROR: No save to recall", "Please save something before attempting to recall.")
                     return None
-                
+
                 if (len(leftStr) == 1 and leftChar == "0"):
                     leftStr.pop()
                     leftVal.pop()
@@ -767,9 +783,13 @@ def buttons_pressed(value):                                                 # ty
     for i in leftStr:
         displayString += i
     displayString += "|"
-    for i in rightStr:                                                      # type: ignore
-        displayString += i                                                  # type: ignore
-    
+    for i in rightStr:
+        displayString += i
+
     label["text"] = displayString
+    if (len(label["text"]) > 10):
+        label.config(font= ["arial", int(27*exp((-len(label["text"])+10)*0.0274653072167027))]) # Magic constant is approx (ln 3)/(50-10)
+        print(label["font"])
+
 
 tab.mainloop()
