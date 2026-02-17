@@ -84,7 +84,6 @@ def changeTrigButtonText(prefix= "", suffix= ""):
     cotButton.config(text= f"{prefix}cot{suffix}")
 
 # The place where stuff actually happens
-print(label["font"])
 def buttons_pressed(value):
     global leftChar, leftStr, leftVal, rightStr, rightVal, funcCounts, Ans, RADButton, RADMode, sinButton, cosButton, tanButton, secButton, cotButton, cscButton, HypMode, InvMode, save, saveVal
 
@@ -650,7 +649,6 @@ def buttons_pressed(value):
             case "nPr":
                 if canPlaceStdFunc():
                     val = initStdFunc(17)
-                    print(val)
                     insertParantheses(val)
                     rightStr.insert(1,"P")
                     rightVal.insert(1, val)
@@ -717,7 +715,9 @@ def buttons_pressed(value):
                 label["text"] += "|"
 
                 if (len(label["text"]) > 10):
-                    label.config(font= ["arial", int(23 - 0.4*len(label["text"]))])
+                    label.config(font= ["arial", int(27*exp((-len(label["text"])+10)*0.0274653072167027))])
+                else:
+                    label.config(font= ["arial", 23])
                 return None
 
             case "RAD":
@@ -789,7 +789,8 @@ def buttons_pressed(value):
     label["text"] = displayString
     if (len(label["text"]) > 10):
         label.config(font= ["arial", int(27*exp((-len(label["text"])+10)*0.0274653072167027))]) # Magic constant is approx (ln 3)/(50-10)
-        print(label["font"])
+    else:
+        label.config(font= ["arial", 23])
 
 
 tab.mainloop()

@@ -1,20 +1,40 @@
 import numpy as n
 # from time import perf_counter
 
-# Const Definitions
-pi = 3.141592653589793
-e =  2.718281828459045
-twoPi = 6.283185307179586
+# Const Definitions (18 decimal places which is the upper limit of precision for python)
+pi = 3.141592653589793238
+e =  2.718281828459045235
+twoPi = 6.283185307179586476
 
 # Whenever floating point comparisons are needed,
 # we subtract the number from the number we want to compare to and check if that difference is less than epsilon
 # if yes, the 2 numbers are close enough to be considered as equal
 # This is needed due to floating point imprecision
-epsilon = 0.0000000001
+epsilon = 0.000000000000001
 
 # Note: Overflow errors are used to indicate domain errors
 
 # Function definitions
+
+def binSearch(fInv, x, left, right):
+    """
+    Approximates the value of the function f at x if its inverse and 2 x-coords to left and right of x are given by doing a binary search.
+    For this to work effectively, f must be continuous and monotonically increasing/decreasing
+    """
+    mid = (left+right)/2
+    approx = fInv(mid)
+
+    while (abs(x-approx) > epsilon):
+        if approx > x:
+            right = mid
+        elif approx < x:
+            left = mid
+        else:
+            return mid
+        mid = (left+right)/2
+        approx = fInv(mid)
+    return mid
+
 # Trig
 def sin(x, rad = True):
     # Convert to radian if input is in degrees
@@ -300,6 +320,9 @@ def mod(x):
         return -x
     return x
 
+def sqrt(x):
+    return x**(0.5)
+
 def factorial(x):
     # Raise error if x is not an integer but continue if its close enough
     if ((abs(x - n.floor(x)) > epsilon) and (abs(x - n.ceil(x)) > epsilon)):
@@ -322,6 +345,8 @@ def factorial(x):
         out *= i
     return out
 
+# I could've made a general logarithmic function for any base but I forgot, and the change of base formula exists so I'm not going to
+
 def log(x):
     # log of 0 (in any base) is -inf
     if x == 0:
@@ -331,7 +356,27 @@ def log(x):
     if x < 0:
         raise OverflowError
 
-    return n.log10(x)
+    left: float = 0
+    right: float = 0
+    if x > 1:
+        right = 1
+        while (10**right < x):
+            right += 1
+        left = right - 1
+    elif x < 1:
+        left = -1
+        while (10**left > x):
+            left -= 1
+        right = left + 1
+    else:
+        return 0
+
+    if 10**right == x:
+        return right
+    elif 10**left == x:
+        return left
+
+    return binSearch(lambda y: 10**y, x, left, right)
 
 def ln(x):
     if x == 0:
@@ -340,11 +385,27 @@ def ln(x):
     if x < 0:
         raise OverflowError
 
-    # Base conversion as numpy does not have a ln function
-    return n.log10(x)/n.log10(e)
+    left: float = 0
+    right: float = 0
+    if x > 1:
+        right = 1
+        while (e**right < x):
+            right += 1
+        left = right - 1
+    elif x < 1:
+        left = -1
+        while (e**left > x):
+            left -= 1
+        right = left + 1
+    else:
+        return 0
 
-def sqrt(x):
-    return x**(0.5)
+    if e**right == x:
+        return right
+    elif e**left == x:
+        return left
+
+    return binSearch(lambda y: e**y, x, left, right)
 
 # Converts Cartesion coordinates to polar coordinates
 def Pol(x, y, rad = True):
