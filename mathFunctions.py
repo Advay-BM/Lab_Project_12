@@ -10,7 +10,7 @@ twoPi = 6.283185307179586476
 # we subtract the number from the number we want to compare to and check if that difference is less than epsilon
 # if yes, the 2 numbers are close enough to be considered as equal
 # This is needed due to floating point imprecision
-epsilon = 0.000000000000001
+epsilon = 0.00000000000001
 
 # Note: Overflow errors are used to indicate domain errors
 
@@ -204,7 +204,22 @@ def asin(x, rad = True):
     if x > 1 or x < -1:
         raise OverflowError
 
-    result = n.arcsin(x)
+    sign = 1
+    if x < 0:
+        x = -x
+        sign = -1
+    elif x == 0:
+        return 0
+
+    if (x == 1):
+        return sign*pi/2
+
+    if 1-x < 0.00001:
+        return sign*(pi/2 + (x-1)*447.21397)
+
+    y = binSearch(sin, x, 0, pi/2)
+    y = y - (sin(y) - x)/cos(y)
+    result = sign*y
     # Convert answer to degrees as the answer is in radians by default
     if not (rad):
         result = result*180 / pi
@@ -215,13 +230,33 @@ def acos(x, rad = True):
     if x > 1 or x < -1:
         raise OverflowError
 
-    result = n.arccos(x)
+    if x > 0:
+        result = asin((1-x*x)**0.5)
+    if x < 0:
+        result = pi - asin((1-x*x)**0.5)
+    else:
+        result = pi/2
+
     if not (rad):
         result = result*180 / pi
 
     return result
+
 def atan(x, rad = True):
-    result = n.arctan(x)
+    sign = 1
+    if x < 0:
+        x = -x
+        sign = -1
+    elif x == 0:
+        return 0
+
+    y = acos(1/((1+x*x)**0.5))
+    y = y - cos(y)*(sin(y) - x*cos(y))
+    if x > 200:
+        for _ in range(10):
+            y = y - cos(y)*(sin(y) - x*cos(y))
+    result = sign*y
+
     if not (rad):
         result = result*180 / pi
 
@@ -231,14 +266,14 @@ def asec(x, rad = True):
     if x < 1 and x > -1:
         raise OverflowError
 
-    result = n.arccos(1/x)
+    result = acos(1/x)
     if not (rad):
         result = result*180 / pi
 
     return result
 
 def acot(x, rad = True):
-    result = n.arctan(1/x)
+    result = atan(1/x)
     if not (rad):
         result = result*180 / pi
 
@@ -248,7 +283,7 @@ def acsc(x, rad = True):
     if x < 1 and x > -1:
         raise OverflowError
 
-    result = n.arcsin(1/x)
+    result = asin(1/x)
     if not (rad):
         result = result*180 / pi
 
