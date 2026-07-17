@@ -1,0 +1,5 @@
+import mysql.connector as m
+def store():
+    con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")
+    cur=con.cursor()
+    cur.execute("insert into history values(%s)")
