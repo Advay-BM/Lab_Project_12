@@ -14,7 +14,7 @@ cur.close()
 i=1
 def store():
     global i
-    con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")
+    con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")#host, user, password and database name to be changed as per the requirement
     cur=con.cursor()
     cur.execute("insert into history values(i,'"+str(input)+"','"+str(output)+"',curdate())")#requires clarity on how input and output is defined
     i+=1
