@@ -1,5 +1,52 @@
-import mysql.connector as m
+import mysql.connector as m 
+#creating the table to store the history
+con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")
+cur=con.cursor()
+cur.execute("create table History( "
+"Sl_no int(5) primary key," \
+"Input varchar(40) not null," \
+"Output varchar(30)," \
+"Date date not null)")
+con.commit()
+cur.close()
+#defining various functions to access the history table from the front end GUI
+#store() to store the input and output in the history table
+i=1
 def store():
+    global i
     con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")
     cur=con.cursor()
-    cur.execute("insert into history values(%s)")
+    cur.execute("insert into history values(i,'"+str(input)+"','"+str(output)+"',curdate())")#requires clarity on how input and output is defined
+    i+=1
+    con.commit()
+    cur.close()
+# used to display full history
+def display():
+    con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")
+    cur=con.cursor()
+    cur.execute("select * from history")
+    data=cur.fetchall()
+    for row in data:
+        print(row)
+    con.commit()
+    cur.close()
+def display_datewise():
+    con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")
+    cur=con.cursor()
+    print("Enter the date in which you wish to see the history")#to be completed with certain inputs
+def del1():
+    con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")
+    cur=con.cursor()
+    cur.execute("delete from history")
+    con.commit()
+    cur.close()
+def del2():
+    con=m.connect(host="localhost",user="root",password="",database="Scientific_Calc")
+    cur=con.cursor()
+    print("Enter the date in which you wish to delete the history")#to be modified cuz i dont like this input method
+    date1= date(input(":"))
+    cur.execute("delete from history where date=date1")
+    con.commit()
+    cur.close()
+
+
