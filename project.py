@@ -83,6 +83,21 @@ def changeTrigButtonText(prefix= "", suffix= ""):
     secButton.config(text= f"{prefix}sec{suffix}")
     cotButton.config(text= f"{prefix}cot{suffix}")
 
+""" THE PLAN
+1. Create a binary file with the specific order of data:
+        leftChar
+        leftStr
+        leftVal
+        rightStr
+        rightVal
+        funcCounts
+        Ans
+2. Load the data, and pass into button functions as a list
+3. Button functions may unpack the list and use the data in the form of local variables, and must return updated data as a list
+4. Rewrite the updated data back into the file
+"""
+
+
 # The place where stuff actually happens
 def buttons_pressed(value):
     global leftChar, leftStr, leftVal, rightStr, rightVal, funcCounts, Ans, RADButton, RADMode, sinButton, cosButton, tanButton, secButton, cotButton, cscButton, HypMode, InvMode, save, saveVal
