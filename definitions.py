@@ -1,4 +1,7 @@
 import tkinter
+import pickle as p
+import tkinter.messagebox
+import sys
 
 # Arrangement of buttons
 Value_buttons=[("!","mod","RCL","Hyp","Inv"),
@@ -65,7 +68,7 @@ I have not placed any restrictions when it comes to characters on the right side
 # Used to distinguish functions when multiple are used in a single expression
 #               0   1    2    3    4    5    6    7   8   9   10   11    12   13   14   15    16    17   18
 # Index order: (), sin, cos, tan, csc, sec, cot, EXP, !, mod, Rec, Pol, 10^x, log, ln, sqrt, nRoot, nPr, nCr
-funcCounts = [0 for i in range(19)]                                         # type: ignore # type: ignore
+funcCounts = [0 for i in range(19)]
 
 # Used to store the answer when Ans is clicked
 Ans = None
@@ -95,3 +98,58 @@ tanButton = createSpclButton("tan")
 cscButton = createSpclButton("csc")
 secButton = createSpclButton("sec")
 cotButton = createSpclButton("cot")
+
+""" Data must strictly follow this order. This means there always 12 objects in the file
+leftChar
+leftStr
+leftVal
+rightStr
+rightVal
+funcCounts
+RADMode
+HypMode
+InvMode
+Ans
+save
+saveVal
+"""
+
+fhandle = open("storage.dat", "wb+")
+
+# Users must pack/unpack file objects when storing/retrieving
+def readFromFile():
+    fhandle.seek(0)
+    out = []
+    try:
+        while True:
+            out.append(p.load(fhandle))
+    except EOFError:
+        return out
+    except p.UnpicklingError as err:
+        tkinter.messagebox.showerror("ERROR: Reading from file", f"The program was unable to read the file storage.dat and will terminate.\nError message: {err}")
+        sys.exit(-2)
+
+def writeToFile(l):
+    # Allow passing placeholder values and incomplete lists for brevity's sake
+    # You might notice that we are using None as a placeholder, but Ans can actually assume a None value. We deal with issue by ignoring it
+    if len(l) != 12:
+        previous = readFromFile()
+        for i in range(12):
+            if i < len(l):
+                if l[i] == None:
+                    l[i] = previous[i]
+            else:
+                l.append(previous[i])
+
+    fhandle.seek(0)
+    fhandle.truncate(0)
+    try:
+        for element in l:
+            p.dump(element, fhandle)
+    except p.PicklingError as err:
+            tkinter.messagebox.showerror("ERROR: Writing from file", f"The program was unable to write to the file storage.dat and will terminate.\nError message: {err}")
+            sys.exit(-1)
+
+
+# Initial values
+writeToFile(["0", ["0"], [0], [], [], [0 for i in range(19)], True, False, False, None, [], []])
